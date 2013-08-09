@@ -1,0 +1,2 @@
+"Total Physical Memory (GB)","Nr of hosts","DCname","Available CPU (Mhz)","Configured CPU (Mhz)","Nr of VMs","Available Disk Space (GB)","Configured Disk Space (GB)","Configured Memory (GB)","Total CPU (Mhz)","VCname","Clustername","Available Memory (GB)","Total Disk Space (GB)"
+"0.0","1","Herbert Street","0",,"0","0.0","0.0","0.0",,"hpvvcs001","Non_Prod_H","0.0","0.0"

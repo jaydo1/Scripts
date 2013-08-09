@@ -1,0 +1,5 @@
+"Hostname","version","Build","manufacture","Model","cpu_model","core_num","totalmemoryMB"
+"bpesx1.bridgests.det.nsw.edu.au","4.0.0","208167","HP","ProLiant DL385 G2","Dual-Core AMD Opteron(tm) Processor 2218","4","32766.30859375"
+"bpesx2.bridgests.det.nsw.edu.au","4.0.0","208167","HP","ProLiant DL385 G2","Dual-Core AMD Opteron(tm) Processor 2218","4","32766.30859375"
+"bpesx3.bridgests.det.nsw.edu.au","5.0.0","623860","HP","ProLiant DL380p Gen8","Intel(R) Xeon(R) CPU E5-2665 0 @ 2.40GHz","16","98269.375"
+"bpesx4.bridgests.det.nsw.edu.au","5.0.0","623860","HP","ProLiant DL380p Gen8","Intel(R) Xeon(R) CPU E5-2665 0 @ 2.40GHz","16","98269.375"

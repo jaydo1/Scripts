@@ -1,0 +1,4 @@
+"Hostname","version","Build","manufacture","Model","cpu_model","core_num","totalmemoryMB","HBA_num"
+"htvu01.unix.mgmt.det","4.1.0","348481","IBM","IBM 3850 M2 / x3950 M2 -[71413RM]-","Intel(R) Xeon(R) CPU           E7330  @ 2.40GHz","16","73726",
+"htvu02.unix.mgmt.det","4.1.0","348481","IBM","IBM 3850 M2 / x3950 M2 -[71413RM]-","Intel(R) Xeon(R) CPU           E7330  @ 2.40GHz","16","73726",
+"htvu03.unix.mgmt.det","4.1.0","348481","IBM","IBM 3850 M2 / x3950 M2 -[71413RM]-","Intel(R) Xeon(R) CPU           E7330  @ 2.40GHz","16","73726",

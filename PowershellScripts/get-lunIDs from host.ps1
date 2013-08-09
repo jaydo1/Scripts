@@ -1,0 +1,1 @@
+﻿Get-ScsiLun -VmHost "utvu05.unixu.mgmt.det" -LunType disk | select runtimename | sort runtimename

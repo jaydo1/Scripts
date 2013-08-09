@@ -1,0 +1,996 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration id="ea1c53d2-0b81-4063-8f06-121a685e785b">
+  <container id="f5f11900-7edc-47f6-9efa-87abd9d5df07" name="PowerPack Info">
+    <items>
+      <container id="01f58085-d817-4d04-8316-f978e8674b7e" name="PowerPack Name">
+        <value>Advanced Reporting</value>
+      </container>
+      <container id="2a7a09ae-54f3-468b-a188-7c3b7c5eb6e3" name="Description">
+        <script><![CDATA[This PowerPack provides a new common action for creating advanced reports.
+
+Key features include the following:
+- generate nicely formatted HTML reports with collapsible sections and multi-level groups from any data type
+- select which fields to include in the report, whether they are visible in the grid or not
+- select which fields to group by in the report, whether they are visible in the grid or not (these fields don't have to be included in those that you want in the report)
+- configure indentation and group name prefixing options for each report
+- format the report data in a tabular or list view just like Format-Table and Format-List
+- define the folder where you want the report saved (by default they are saved in an Exports subfolder under your documents folder in your user profile)
+- optionally open the report automatically once it has been generated
+- optionally open the folder containing the report automatically once it has been generated
+
+This PowerPack requires PowerGUI 1.8.0 or later because it uses features that were not available in earlier versions of PowerGUI.]]></script>
+      </container>
+      <container id="2c4e1b31-79c0-46ad-aa27-eaacf1c10b59" name="Required Snapins" />
+      <container id="158620d6-6c0c-4c58-a3b0-8810fd17c3b1" name="PowerPack Version">
+        <value>1.0.0.4</value>
+      </container>
+      <container id="81ad5d68-143b-4c79-8a95-bef6c941282b" name="PowerPack CreateDate">
+        <value>2009-06-19 14:03:49Z</value>
+      </container>
+      <container id="7600fdf1-ca11-4145-87fa-f3bc6b49d0f2" name="Update URL">
+        <value>http://powergui.org/servlet/KbServlet/download/2423-102-3725/AdvancedReporting.powerpack</value>
+      </container>
+      <container id="8ae73fa1-67e8-4d3f-ad11-8245f7f5267f" name="PowerPack Home Page">
+        <value>http://www.powergui.org/entry.jspa?externalID=2423&amp;categoryID=21</value>
+      </container>
+      <container id="2840a004-5414-4758-b256-81fdcd9f8a87" name="PowerPack Icon">
+        <value>AAABAAIAICAAAAEACACoCAAAJgAAABAQAAABAAgAaAUAAM4IAAAoAAAAIAAAAEAAAAABAAgAAAAAAAAEAAAAAAAAAAAAAAABAAAAAQAAAAAAAGtrawBvbW8AcXFxAHZ0dgB5eXkAfHp8ALl6DwCqdSIAj3taAI55XACofVcAon9dAIp7aQCNemsAkXxjAJV+YwCFfHIAhH50AACbCwAImhYAJL08ADOyQgBVsl8AW69jALKBNADPhAAAxYEWAMCEIwCwiF8AnYFhAJiCZACUhXIAl4V2AJuIcQCfinMAqotnAK2KbwCtjm8AqY5xAKONfwCqkXYAuZZzALWZdQC3nHoAvZt8ANqgSADMoVYAwJBtAMekewDSo3sA0q17APOkdwAPMbkAIjuqADRLsgAAMc8AFjbFACNEwABWacwASGTaAHuI0gCIi4gAj46OAJeVjwCQjZAAk5OTAJaUlgCYmJcAn5uVAJubmwCem54Ao5OEALueiwCwnpMAvKKDALykhAC+qo0Ar6ubALmnkQCwpZkAo6OjAKWipQCqqqoAt7OjALawpAC+ua4As7OzALWxtQC6uroAvrq+AMWogQDGrIIAzKuFAMWmiQDLrYoA0KWBANCrgQDbr4EAz7CBAMWxjgDPtIgAzbGNANC2igDYvY8AxKWRAMSqkQDDrZIAzq6QAMCsmgDOs5AAzrmVAMWymwDNtpkAzbqeAOWtggD6uowA7b6VAMGyogDMsaEAz72jAMS4rADMu6sA1bugAN++pwDWwZ0A3MucAN7SnQDixo4A4tKOAOHAlgDhxZYA7cmVAOnAmQDrzp0A+c+VAPbdnADbxKUA3cmjANXDqgDYxrMA3cewAN7PuQDhx6IA5c2kAOnRogDq2KUA5tKrAOnRrwDu364A9dylAObYswDt3bUA5NS8AP7ftwDz2rgA/+elAP/grQD/660A8OS3AP7qtwDw47oA8eq9AIGQzwDDw8MAxsfGAM/KzwDMzMwA09PTAOzcxQD83cAA8+LGAPLowwD0480A6ePTAOnj1ADp5NQA6ubYAOvo2gDt6NkA6+jcAO7p3QDi3OIA4eHhAO/r4ADv7uEA6+XrAOrr6wDw7eIA8e7lAPTv6ADx8OUA8/HoAPTx6QD09OoA9fPtAPX07gD49e4A9vPwAPb18AD49fAA+fb1AP/19QDx+/QA9Pr0APn48gD5+fUA+fr5APz6+QD7/foA/Pz6AP7+/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAChKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIkkAHR4AEHsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAtYTJ0NAswSQAAAAAAAAAAAgICAgICAgICAgICAkUtLYGdnZaHnZ1hSS0AAAAAAAAE/7W1tbOxsbGxsbGxsS2DnINKVE4rnYRpJgAAAAAAAAb/tbW1tbW1s7GxsbGurp2AEv///2xcnXUAAAAAAAAAPv+5uTU4ODi1sQcasS2WnSD//////3Gdhl52AAAAAABA/729NTo6OrW1BxqxLZKWDv//////cYiES2oAAAAAAEX/vb01PDw8tbUHLi6xsZxc//////9lh2gAAAAAAAAARf/BwTU9PT29uQccHLFenaAJ////JoKdaUkAAAAAAABF/8HBNTU1Nb29Bxwcri0toJooJh1xlmFjaQAAAAAAAEX/wcHBwcHBvr4HLi4uubkthpuqqpIxLQAAAAAAAAAARf/Nzc3Bx8HBwQdhMzK9vV5suWBitSYtAAAAAAAAAABF/83Nzc3BzMHBBwcHB729vb29K2m1tbEAAAAAAAAAAEX/zc1SUVJRzcXBwcHBwb4TFb25ubm1RQAAAAAAAAAARf/Ozc7Nzs3Nwc7BzcHBwRMXFxe9vb1FAAAAAAAAAABF////UlFSUc3Nzc3BzsXBExMTE729vUUAAAAAAAAAAEX//83/yf/Nzs7Ozs3NzczFwcHBxcHBRQAAAAAAAAAARf///8n/zf/Ozs7Ozs7Oxc3NzcXBwcFFAAAAAAAAAABF////UlJSUlFRR0dHQ0NAQEFBQc3OwUUAAAAAAAAAAEX//////////8n//83Ozs7Ozs7Nwc7BRwAAAAAAAAAARf///1JSUlJSR0ZGQ0NAQEBBQUHOzs5FAAAAAAAAAABF////////////////////zv/Nzs7OzkUAAAAAAAAAAEX////////////////O/87/zf//zc7ORQAAAAAAAAAARf//////////////////////p6elWlhFAAAAAAAAAABF////UlJSUlJSR0ZGQ///ukNFRUVFRUUAAAAAAAAAAEX///////////////////+6Rc3NtlpFAAAAAAAAAAAARf///1JSUlJSR0dHR0D//7pF/7qlRQAAAAAAAAAAAABF////////////////////ukW2pUUAAAAAAAAAAAAAAEX///////////////////+6RaVFAAAAAAAAAAAAAAAARf///////////////////7pFRQAAAAAAAAAAAAAAAABFRUVFRUVFRUVFRUVFRUVFRUUAAAAAAAAAAAAAAAD///n////JP///wD/AAAAPwAAAD8AAAB/AAAAHwAAAB8AAAB/AAAAPwAAAD8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAH/AAAD/wAAB/8AAA//AAAf/wAAP/ygAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAABAAAAAAAANhcBAFxAKABkZGQAenp6AJFbKADOYwAA53sAAIRrWgCEc2MAIb1SADHOYwD/nAAAnIx7ACFS/wBKe/8AhoaGAJKSkgCdnp4ArZyUAKysrACysrIAubm5AMKvmgDVw6wA6dWzAMDAwADKysoA9eLPAPXu2gD/8NYA//LbAN/f4ADl5eYA//f3AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8AAAAAAAAAAAAAABgFGAAAAAAAAAAAAAAAAAUfHx8FAAAABAMDAwMDAxgfHxcfHxgAABD///////8FHwH/GB0FAAAR/w4O/wb/GP8ZAh4cGAAAEv8PD/8HB/8F/x0fBQAAABT/////DAz//xgFGAAAAAAV/////////wr//xUAAAAAFf8TEw0I//8LC/8VAAAAABb/////////////FgAAAAAW/xMTDQkiEw3//xYAAAAAFv//////////ISAWAAAAABb/ExMNCSITFhYWFgAAAAAa/////////xr/FQAAAAAAGv////////8bFgAAAAAAABoaGhoaGhoaFgAAAAAAAP/HAAD/gwAAgAEAAIABAACAAQAAgAMAAIAHAACABwAAgAcAAIAHAACABwAAgAcAAIAHAACADwAAgB8AAIA/AAA=</value>
+      </container>
+      <container id="7b082250-5a98-48f5-8a3f-6ab5f1e4d90e" name="Console Version">
+        <value>2.0</value>
+      </container>
+    </items>
+  </container>
+  <items>
+    <container id="b3b2283e-6f58-40c6-86b6-f01cd7f060fa" name="Navigation Tree" />
+    <container id="1ef02fe0-c6fc-4cdc-88bc-a9e4313bee18" name="Actions">
+      <items>
+        <container id="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Actions" type="NonGet" />
+        <container id="481eccc0-43f8-47b8-9660-f100dff38e14" name="Links" type="Get" />
+        <container id="6669cb81-df60-4f11-9d8f-8ab7c003dd1b" name="Actions: Common" type="NonGet">
+          <items>
+            <container id="97063bc2-dcf3-4c5f-ace1-dc16bd0bb60a" name="Create report..." Description="Create an HTML report containing the items that are currently selected by specifying the properties to include in the report, any properties you wish to group by, and other report configuration information." RequireSelection="Yes" DisplayResults="LeaveAsIs">
+              <IconB64>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</IconB64>
+              <script><![CDATA[#region Store the selected items to process them later.
+$selectedItems = @($input | ForEach-Object {$_})
+#endregion
+
+#region Prompt the user for the report configuration details.
+$cancelled = $true
+if ($selectedItems) {
+	[string[]]$propertyNames = @()
+	foreach ($property in $selectedItems[0].PSObject.Properties) {
+		if ($Property.IsGettable) {
+			$propertyNames += $property.Name
+		}
+	}
+	if ($propertyNames) {
+		$fieldDescriptions = @(
+			(New-FieldDescription -Name 'Report title' -HelpMessage 'The title to apply to the report.' -Type 'System.String' -DefaultValue "$(Get-AdminConsoleName) Report ($(Get-Date))" -IsMandatory $true),
+			(New-FieldDescription -Name 'Report subtitle' -HelpMessage 'The subtitle to apply to the report.' -Type 'System.String' -DefaultValue $(Get-AdminConsoleViewName) -IsMandatory $true),
+			(New-FieldDescription -Name 'Properties to include in the report' -HelpMessage 'The properties that you want included to the report. These properties will be included in the order in which they are listed here.' -Type 'System.String[]' -DefaultValue $propertyNames -IsMandatory $true),
+			(New-FieldDescription -Name 'Properties to group by in the report' -HelpMessage 'The properties that you to use to apply logical (nested) groupings in your report. These properties don''t have to be be included in list of properties you are including in your report.' -Type 'System.String[]' -DefaultValue @() -IsMandatory $true),
+			(New-FieldDescription -Name 'Prefix group names' -HelpMessage 'True if you want the group names prefixed by the property name, false otherwise.' -Type 'System.Boolean' -DefaultValue $true -IsMandatory $true),
+			(New-FieldDescription -Name 'Indentation style' -HelpMessage 'The indentation style to apply to the report. Valid values are ''None'', ''One level'' and ''All levels''.' -Type 'AdminConsole.ReportIndentationStyle' -DefaultValue 'None' -IsMandatory $true),
+			(New-FieldDescription -Name 'Data format' -HelpMessage 'The data format to apply to the report. Valid values are ''Automatic'', ''Table'' and ''List''.' -Type 'AdminConsole.ReportDataFormat' -DefaultValue 'Automatic (format chosen based on the number of properties selected)' -IsMandatory $true),
+			(New-FieldDescription -Name 'Folder' -HelpMessage 'The path to the folder where your report will be stored.' -Type 'System.String' -DefaultValue "$([System.Environment]::GetFolderPath('MyDocuments'))\$($(Get-AdminConsoleName) -replace '[\[\]\\/:\*""\<\>\|]','') Exports" -IsMandatory $true),
+			(New-FieldDescription -Name 'Filename' -HelpMessage 'The filename to use for your report.' -Type 'System.String' -DefaultValue "$($(Get-AdminConsoleViewName) -replace '[\[\]\\/:\*""\<\>\|]','').htm" -IsMandatory $true),
+			(New-FieldDescription -Name 'Open folder when complete' -HelpMessage 'Set to true if you want the folder where the report is stored to open automatically once the report has been generated; false otherwise.' -Type 'System.Management.Automation.SwitchParameter' -DefaultValue $false -IsMandatory $true),
+			(New-FieldDescription -Name 'Open report when complete' -HelpMessage 'Set to true if you want the report to open automatically once the report has been generated; false otherwise.' -Type 'System.Management.Automation.SwitchParameter' -DefaultValue $true -IsMandatory $true)
+		)
+		:promptLoop while ($true) {
+			$result = Read-Input -Caption "New $(Get-AdminConsoleName) Report" -Message "Please provide the list of properties you want to include in the report, the list of properties you want to group by in the report, the name of the report file and the folder where you want to store your report in the fields provided below.`n`nIf you want the report to open automatically once it has been generated, set the 'Open report when complete' field to True. If you want the folder where the report is stored to open automatically once the report has been generated, set the 'Open folder when complete' field to True." -FieldDescription $FieldDescriptions
+			if ($result.Count) {
+				$title = $result.'Report title'
+				$subtitle = $result.'Report subtitle'
+				$properties = $result.'Properties to include in the report' | ForEach-Object {if ($propertyNames -eq $_) {$propertyNames -eq $_} else {$_}}
+				$groupByProperties = $result.'Properties to group by in the report' | ForEach-Object {if ($propertyNames -eq $_) {$propertyNames -eq $_} else {$_}}
+				$prefixGroupNames = $result.'Prefix group names'
+				$indentationStyle = $result.'Indentation style'
+				$dataFormat = $result.'Data format'
+				$folder = $result.Folder
+				$fileName = $result.Filename
+				$openFolder = $result.'Open folder when complete'
+				$openFile = $result.'Open report when complete'
+				$path = Join-Path -Path $folder -ChildPath $fileName
+				$qualifiedPath = $path
+				if ($path -match '^Microsoft\.PowerShell\.Core\\FileSystem::') {
+					$path = $path.Replace('Microsoft.PowerShell.Core\FileSystem::','')
+				} else {
+					$qualifiedPath = "Microsoft.PowerShell.Core\FileSystem::$path"
+				}
+				if (-not $properties) {
+					if ([System.Windows.Forms.MessageBox]::Show('You must specify the properties you want to include in the report.','Property list is required',[System.Windows.Forms.MessageBoxButtons]::OKCancel,[System.Windows.Forms.MessageBoxIcon]::Exclamation) -eq [System.Windows.Forms.DialogResult]::Cancel) {
+						break
+					}
+					$fieldDescriptions[0].DefaultValue  = $title
+					$fieldDescriptions[1].DefaultValue  = $subtitle
+					$fieldDescriptions[3].DefaultValue  = "`"$([string]::Join('`",`"',$groupByProperties))`""
+					$fieldDescriptions[4].DefaultValue  = $prefixGroupNames
+					$fieldDescriptions[5].DefaultValue  = $indentationStyle
+					$fieldDescriptions[6].DefaultValue  = $dataFormat
+					$fieldDescriptions[7].DefaultValue  = $folder
+					$fieldDescriptions[8].DefaultValue  = $fileName
+					$fieldDescriptions[9].DefaultValue  = $openFolder
+					$fieldDescriptions[10].DefaultValue = $openFile
+				} elseif (@('None','One level','All levels') -notcontains $indentationStyle) {
+					if ([System.Windows.Forms.MessageBox]::Show("The indentation style ('$indentationStyle') is invalid. Valid indentation styles include 'None', 'One level' and 'All levels'.",'Invalid indentation style',[System.Windows.Forms.MessageBoxButtons]::OKCancel,[System.Windows.Forms.MessageBoxIcon]::Exclamation) -eq [System.Windows.Forms.DialogResult]::Cancel) {
+						break
+					}
+					$fieldDescriptions[0].DefaultValue  = $title
+					$fieldDescriptions[1].DefaultValue  = $subtitle
+					$fieldDescriptions[2].DefaultValue  = "`"$([string]::Join('`",`"',$properties))`""
+					$fieldDescriptions[3].DefaultValue  = "`"$([string]::Join('`",`"',$groupByProperties))`""
+					$fieldDescriptions[4].DefaultValue  = $prefixGroupNames
+					$fieldDescriptions[5].DefaultValue  = $indentationStyle
+					$fieldDescriptions[6].DefaultValue  = $dataFormat
+					$fieldDescriptions[7].DefaultValue  = $folder
+					$fieldDescriptions[8].DefaultValue  = $fileName
+					$fieldDescriptions[9].DefaultValue  = $openFolder
+					$fieldDescriptions[10].DefaultValue = $openFile
+				} elseif (@('Automatic (format chosen based on the number of properties selected)','Table','List') -notcontains $dataFormat) {
+					if ([System.Windows.Forms.MessageBox]::Show("The data format ('$dataFormat') is invalid. Valid data formats include 'Automatic', 'Table' and 'List'.",'Invalid data format',[System.Windows.Forms.MessageBoxButtons]::OKCancel,[System.Windows.Forms.MessageBoxIcon]::Exclamation) -eq [System.Windows.Forms.DialogResult]::Cancel) {
+						break
+					}
+					$fieldDescriptions[0].DefaultValue  = $title
+					$fieldDescriptions[1].DefaultValue  = $subtitle
+					$fieldDescriptions[2].DefaultValue  = "`"$([string]::Join('`",`"',$properties))`""
+					$fieldDescriptions[3].DefaultValue  = "`"$([string]::Join('`",`"',$groupByProperties))`""
+					$fieldDescriptions[4].DefaultValue  = $prefixGroupNames
+					$fieldDescriptions[5].DefaultValue  = $indentationStyle
+					$fieldDescriptions[6].DefaultValue  = $dataFormat
+					$fieldDescriptions[7].DefaultValue  = $folder
+					$fieldDescriptions[8].DefaultValue  = $fileName
+					$fieldDescriptions[9].DefaultValue  = $openFolder
+					$fieldDescriptions[10].DefaultValue = $openFile
+				} elseif ((-not $fileName) -or (-not $folder) -or ($fileName -notmatch '^.+(\.\w+)$') -or (-not (Test-Path -LiteralPath $qualifiedPath -IsValid))) {
+					if ([System.Windows.Forms.MessageBox]::Show("The path where the file will be saved ('$path') is invalid. You must specify a valid file system folder and filename including extension where you want to store your exported data.",'Invalid folder or filename',[System.Windows.Forms.MessageBoxButtons]::OKCancel,[System.Windows.Forms.MessageBoxIcon]::Exclamation) -eq [System.Windows.Forms.DialogResult]::Cancel) {
+						break
+					}
+					$fieldDescriptions[0].DefaultValue  = $title
+					$fieldDescriptions[1].DefaultValue  = $subtitle
+					$fieldDescriptions[2].DefaultValue  = "`"$([string]::Join('`",`"',$properties))`""
+					$fieldDescriptions[3].DefaultValue  = "`"$([string]::Join('`",`"',$groupByProperties))`""
+					$fieldDescriptions[4].DefaultValue  = $prefixGroupNames
+					$fieldDescriptions[5].DefaultValue  = $indentationStyle
+					$fieldDescriptions[6].DefaultValue  = $dataFormat
+					$fieldDescriptions[7].DefaultValue  = $folder
+					$fieldDescriptions[8].DefaultValue  = $fileName
+					$fieldDescriptions[9].DefaultValue  = $openFolder
+					$fieldDescriptions[10].DefaultValue = $openFile
+				} elseif ((-not (Test-Path -LiteralPath $qualifiedPath)) -or ([System.Windows.Forms.MessageBox]::Show("The file that you want to use for your report ('$path') already exists. Do you want to overwrite it?",'File Already Exists',[System.Windows.Forms.MessageBoxButtons]::YesNo,[System.Windows.Forms.MessageBoxIcon]::Question) -eq [System.Windows.Forms.DialogResult]::Yes)) {
+					$cancelled = $false
+					break
+				}
+			} else {
+				break
+			}
+		}
+	}
+}
+#endregion
+
+#region Generate the report.
+if (-not $cancelled) {
+	$qualifiedParentPath = Split-Path -Path $qualifiedPath -Parent
+	if (-not (Test-Path -LiteralPath $qualifiedParentPath)) {
+		New-Item -Path $qualifiedParentPath -ItemType Directory -Force | Out-Null
+	}
+	New-HtmlReport -Title $title -Filename $qualifiedPath -OpenFile:$OpenFile -OpenFolder:$OpenFolder -Content {
+		if ($dataFormat -eq 'Automatic (format chosen based on the number of properties selected)') {
+			if ($properties.Count -le 4) {
+				$dataFormat = 'Table'
+			} else {
+				$dataFormat = 'List'
+			}
+		}
+		switch ($dataFormat) {
+			'Table' {
+				$selectedItems | ConvertTo-HtmlReportTable -Title $subtitle -Property $properties -GroupBy $groupByProperties -Indent $indentationStyle.ToString().Replace(' ','') -PrefixGroupNames:$prefixGroupNames -Collapsible -Expanded
+				break
+			}
+			'List' {
+				$selectedItems | ConvertTo-HtmlReportList -Title $subtitle -Property $properties -GroupBy $groupByProperties -Indent $indentationStyle.ToString().Replace(' ','') -PrefixGroupNames:$prefixGroupNames -Collapsible -Expanded
+				break
+			}
+		}
+	}
+}
+#endregion]]></script>
+              <Types />
+            </container>
+          </items>
+        </container>
+      </items>
+    </container>
+    <container id="9355c471-85b2-4b9a-92db-69873837cd8d" name="Icons" />
+    <container id="37fc9e95-a3a2-4f53-a2d4-d29fe752995c" name="ActionForTypes" />
+    <container id="c4ac93e0-f9c3-4e70-9e77-79210fee0239" name="Scripts">
+      <items>
+        <container name="Advanced Reporting.ps1">
+          <script><![CDATA[#region Core Utility Functions
+
+function global:Get-PSResourceString {
+	param(
+		[string]$BaseName = $null,
+		[string]$ResourceId = $null,
+		[string]$DefaultValue = $null,
+		[System.Globalization.CultureInfo]$Culture = $host.CurrentCulture,
+		[Switch]$List
+	)
+
+	if ($List -and ($ResourceId -or $DefaultValue)) {
+		throw $(Get-PSResourceString -BaseName 'ParameterBinderStrings' -ResourceId 'AmbiguousParameterSet')
+	}
+
+	if ($List) {
+		$engineAssembly = [System.Reflection.Assembly]::GetExecutingAssembly()
+		$hostAssembly = [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.PowerShell.ConsoleHost')
+		if ($BaseName) {
+			$engineAssembly.GetManifestResourceNames() | Where-Object { $_ -eq "$BaseName.resources" } | ForEach-Object {
+				$resourceManager = New-Object -TypeName System.Resources.ResourceManager($BaseName, $engineAssembly)
+				$resourceManager.GetResourceSet($host.CurrentCulture,$true,$true) | Add-Member -Name BaseName -MemberType NoteProperty -Value $BaseName -Force -PassThru | ForEach-Object {
+					$_.PSObject.TypeNames.Clear()
+					$_.PSObject.TypeNames.Add('ResourceString')
+					$_ | Write-Output
+				}
+			}
+			$hostAssembly.GetManifestResourceNames() | Where-Object { $_ -eq "$BaseName.resources" } | ForEach-Object {
+				$resourceManager = New-Object -TypeName System.Resources.ResourceManager($BaseName, $hostAssembly)
+				$resourceManager.GetResourceSet($host.CurrentCulture,$true,$true) | Add-Member -Name BaseName -MemberType NoteProperty -Value $BaseName -Force -PassThru | ForEach-Object {
+					$_.PSObject.TypeNames.Clear()
+					$_.PSObject.TypeNames.Add('ResourceString')
+					$_ | Write-Output
+				}
+			}
+		} else {
+			$engineAssembly.GetManifestResourceNames() | Where-Object { $_ -match '\.resources$' } | ForEach-Object { $_.Replace('.resources','') }
+			$hostAssembly.GetManifestResourceNames() | Where-Object { $_ -match '\.resources$' } | ForEach-Object { $_.Replace('.resources','') }
+		}
+	} else {
+		if (-not $BaseName) {
+			throw $($(Get-PSResourceString -BaseName 'ParameterBinderStrings' -ResourceId 'ParameterArgumentValidationErrorNullNotAllowed') -f $null,'BaseName')
+		}
+		if (-not $ResourceId) {
+			throw $($(Get-PSResourceString -BaseName 'ParameterBinderStrings' -ResourceId 'ParameterArgumentValidationErrorNullNotAllowed') -f $null,'ResourceId')
+		}
+		if (-not $global:PSResourceStringTable) {
+			$engineAssembly = [System.Reflection.Assembly]::GetExecutingAssembly()
+			$hostAssembly = [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.PowerShell.ConsoleHost')
+			if ($engineAssembly.GetManifestResourceNames() -contains "$BaseName.resources") {
+				New-Variable -Scope Global -Name PSResourceStringTable -Value @{} -Description 'A cache of PowerShell resource strings. To access data in this table, use Get-ResourceString.'
+				$global:PSResourceStringTable['EngineAssembly'] = @{'Assembly'=$engineAssembly;'Cultures'=@{}}
+				$global:PSResourceStringTable['HostAssembly'] = @{'Assembly'=$hostAssembly;'Cultures'=@{}}
+				$resourceManager = (New-Object -TypeName System.Resources.ResourceManager($BaseName, $global:PSResourceStringTable.EngineAssembly.Assembly));
+				$global:PSResourceStringTable.EngineAssembly.Cultures[$Culture.Name] = @{$BaseName=@{'ResourceManager'=$resourceManager;'Strings'=$resourceManager.GetResourceSet($Culture,$true,$true)}};
+			} elseif ($hostAssembly.GetManifestResourceNames() -contains "$BaseName.resources") {
+				New-Variable -Scope Global -Name PSResourceStringTable -Value @{} -Description 'A cache of PowerShell resource strings. To access data in this table, use Get-ResourceString.'
+				$global:PSResourceStringTable['EngineAssembly'] = @{'Assembly'=$engineAssembly;'Cultures'=@{}}
+				$global:PSResourceStringTable['HostAssembly'] = @{'Assembly'=$hostAssembly;'Cultures'=@{}}
+				$resourceManager = (New-Object -TypeName System.Resources.ResourceManager($BaseName, $global:PSResourceStringTable.HostAssembly.Assembly));
+			$global:PSResourceStringTable.HostAssembly.Cultures[$Culture.Name] = @{$BaseName=@{'ResourceManager'=$resourceManager;'Strings'=$resourceManager.GetResourceSet($Culture,$true,$true)}};
+			}
+		} elseif ($global:PSResourceStringTable.EngineAssembly.Assembly.GetManifestResourceNames() -contains "$BaseName.resources") {
+			if (-not $global:PSResourceStringTable.EngineAssembly.Cultures.ContainsKey($Culture.Name)) {
+				$resourceManager = (New-Object -TypeName System.Resources.ResourceManager($BaseName, $global:PSResourceStringTable.EngineAssembly.Assembly));
+				$global:PSResourceStringTable.EngineAssembly.Cultures[$Culture.Name] = @{$BaseName=@{'ResourceManager'=$resourceManager;'Strings'=$resourceManager.GetResourceSet($Culture,$true,$true)}};
+			} elseif (-not $global:PSResourceStringTable.EngineAssembly.Cultures[$Culture.Name].ContainsKey($BaseName)) {
+				$resourceManager = (New-Object -TypeName System.Resources.ResourceManager($BaseName, $global:PSResourceStringTable.EngineAssembly.Assembly));
+				$global:PSResourceStringTable.EngineAssembly.Cultures[$Culture.Name][$BaseName] = @{'ResourceManager'=$resourceManager;'Strings'=$resourceManager.GetResourceSet($Culture,$true,$true)};
+			}
+		} elseif ($global:PSResourceStringTable.HostAssembly.Assembly.GetManifestResourceNames() -contains "$BaseName.resources") {
+			if (-not $global:PSResourceStringTable.HostAssembly.Cultures.ContainsKey($Culture.Name)) {
+				$resourceManager = (New-Object -TypeName System.Resources.ResourceManager($BaseName, $global:PSResourceStringTable.HostAssembly.Assembly));
+				$global:PSResourceStringTable.HostAssembly.Cultures[$Culture.Name] = @{$BaseName=@{'ResourceManager'=$resourceManager;'Strings'=$resourceManager.GetResourceSet($Culture,$true,$true)}};
+			} elseif (-not $global:PSResourceStringTable.HostAssembly.Cultures[$Culture.Name].ContainsKey($BaseName)) {
+				$resourceManager = (New-Object -TypeName System.Resources.ResourceManager($BaseName, $global:PSResourceStringTable.HostAssembly.Assembly));
+				$global:PSResourceStringTable.HostAssembly.Cultures[$Culture.Name][$BaseName] = @{'ResourceManager'=$resourceManager;'Strings'=$resourceManager.GetResourceSet($Culture,$true,$true)};
+			}
+		}
+
+		$resourceString = $null
+		if ($global:PSResourceStringTable) {
+			if ($global:PSResourceStringTable.EngineAssembly.Cultures -and $global:PSResourceStringTable.EngineAssembly.Cultures.ContainsKey($Culture.Name) -and $global:PSResourceStringTable.EngineAssembly.Cultures[$Culture.Name].ContainsKey($BaseName)) {
+				$resourceString = ($global:PSResourceStringTable.EngineAssembly.Cultures[$Culture.Name][$BaseName].Strings | Where-Object { $_.Name -eq $ResourceId }).Value
+			} elseif ($global:PSResourceStringTable.HostAssembly.Cultures -and $global:PSResourceStringTable.HostAssembly.Cultures.ContainsKey($Culture.Name) -and $global:PSResourceStringTable.HostAssembly.Cultures[$Culture.Name].ContainsKey($BaseName)) {
+				$resourceString = ($global:PSResourceStringTable.HostAssembly.Cultures[$Culture.Name][$BaseName].Strings | Where-Object { $_.Name -eq $ResourceId }).Value
+			}
+		}
+		if (-not $resourceString) {
+			$resourceString = $DefaultValue
+		}
+		
+		return $resourceString
+	}
+}
+
+function global:New-Enum {
+	param(
+		[string]$Name = $null,
+		[string]$AssemblyName = $null,
+		[System.Management.Automation.PSObject]$Values = $null
+	)
+
+	$internalScript = {
+		param(
+			[string]$Name = $null,
+			[string]$AssemblyName = $null,
+			[System.Management.Automation.PSObject]$Values = $null
+		)
+
+		$promptedForRequiredParameters = $false
+		if ((-not $promptedForRequiredParameters) -and ((-not $Name) -or ((-not $Values) -and (-not $Values.Count) -and (-not $Values.Keys.Count)))) {
+			$promptedForRequiredParameters = $true
+			Write-Host -ForegroundColor White -Object ((Get-PSResourceString -BaseName ParameterBinderStrings -ResourceId PromptCaption) -f 'New-Enum',$MyInvocation.PipelinePosition)
+			Write-Host (Get-PSResourceString -BaseName -ResourceId PromptMessage)
+			if (-not $Name) {
+				if ($result = Read-Host -Prompt 'Name') {
+					$Name = $result
+				} else {
+					return
+				}
+			}
+			if (-not $Values) {
+				$index = 0
+				$Values = @()
+				while ($result = Read-Host -Prompt "Values[$index]") {
+					$index++
+					$Values += $result
+				}
+				if (-not $Values) {
+					return
+				}
+			}
+		}
+
+		$appdomain = [System.Threading.Thread]::GetDomain()
+		$assembly = New-Object -TypeName System.Reflection.AssemblyName
+		if ($AssemblyName) {
+			$assembly.Name = $AssemblyName
+			$Name = "$AssemblyName.$Name"
+		} else {
+			$assembly.Name = 'DynamicallyCreatedEnum'
+		}
+
+		$assemblyBuilder = $appdomain.DefineDynamicAssembly(
+			$assembly,
+			[System.Reflection.Emit.AssemblyBuilderAccess]::Save -bor [System.Reflection.Emit.AssemblyBuilderAccess]::Run
+		)
+
+		$moduleBuilder = $assemblyBuilder.DefineDynamicModule("DynamicModule", "DynamicModule.mod")
+
+		$enumBuilder = $moduleBuilder.DefineEnum($Name, [System.Reflection.TypeAttributes]::Public, [int32])
+
+		if (($Values -is [string]) -or ($Values -is [array])) {
+			$Values = @($Values) + $args
+			for ($i = 0; $i -lt $Values.Length; $i++) {
+				$enumBuilder.DefineLiteral($Values[$i],$i) | Out-Null
+			}
+		} elseif ($Values -is [System.Collections.Hashtable]) {
+			foreach ($key in $Values.Keys) {
+				$enumBuilder.DefineLiteral($key,$Values[$key]) | Out-Null
+			}
+		}
+
+		$enumBuilder.CreateType()
+	}
+
+	#region Extra script to workaround PowerShell v2 defect.
+	$passThruArgs = $args
+	$trailingArguments = ''
+	for ($index = 0; $index -lt $passThruArgs.Count; $index++) {
+		$trailingArguments += " `$passThruArgs[$index]"
+	}
+	Invoke-Expression "& `$internalScript -Name `$Name -AssemblyName `$AssemblyName -Values `$Values$trailingArguments | Out-Null"
+	Invoke-Expression "& `$internalScript -Name `$Name -AssemblyName `$AssemblyName -Values `$Values$trailingArguments"
+	#endregion
+}
+
+#endregion
+#region Read Input Functions
+
+function global:New-ChoiceDescription {
+	param(
+		[string]$Name,
+		[string]$HelpMessage = $null
+	)
+
+	$choiceDescription = [System.Management.Automation.Host.ChoiceDescription]$Name
+	$choiceDescription.HelpMessage = $HelpMessage
+
+	$choiceDescription
+}
+
+function global:Read-Choice {
+	param(
+		[string]$Caption,
+		[string]$Message,
+		[System.Management.Automation.Host.ChoiceDescription[]]$ChoiceDescription,
+		[int]$DefaultChoice = 0
+	)
+
+	$host.ui.PromptForChoice($Caption,$Message,$ChoiceDescription,$DefaultChoice)
+}
+
+function global:New-FieldDescription {
+	param(
+		[string]$Name,
+		[string]$HelpMessage = $null,
+		[Type]$Type = 'System.String',
+		[PSObject]$DefaultValue = $null,
+		[bool]$IsMandatory = $false
+	)
+
+	$fieldDescription = [System.Management.Automation.Host.FieldDescription]$Name
+	$fieldDescription.SetParameterType([Type]$Type)
+	$fieldDescription.DefaultValue = $DefaultValue
+	$fieldDescription.HelpMessage = $HelpMessage
+	$fieldDescription.IsMandatory = $IsMandatory
+
+	$fieldDescription
+}
+
+function global:Read-Input {
+	param(
+		[string]$Caption,
+		[string]$Message,
+		[System.Management.Automation.Host.FieldDescription[]]$FieldDescription
+	)
+
+	$host.ui.Prompt($Caption,$Message,$FieldDescription)
+}
+
+function global:New-Credential {
+	param(
+		[string]$Username,
+		[System.Security.SecureString]$Password
+	)
+	
+	New-Object System.Management.Automation.PSCredential($Username,$Password)
+}
+
+function global:Read-Credential {
+	param(
+		$Credential = $null
+	)
+
+	if ($Credential -is [System.Management.Automation.PSCredential]) {
+		$Credential
+	} else {
+		$result = Read-Input 'Enter your credentials' 'Please enter your authentication credentials in the fields provided' @((New-FieldDescription 'Username' 'Your account username' 'System.String' $Credential $true),(New-FieldDescription 'Password' 'Your account password' 'System.Security.SecureString' $null $true))
+		if ($result.Count) {
+			New-Credential -Username $result['Username'] -Password $result['Password']
+		}
+	}
+}
+
+#endregion
+#region Admin Console Functions
+
+function global:Get-AdminConsoleName {
+	$currentNode = $Host.PrivateData.ConsoleHostFactory.Application.Navigation.CurrentItem
+	while ($currentNode.Type -ne 'Root') {
+		$currentNode = $currentNode.Parent
+	}
+	$currentNode.Name
+}
+
+function global:Get-AdminConsoleViewName {
+	$Host.PrivateData.ConsoleHostFactory.Application.Navigation.LinkLabel
+}
+
+#endregion
+#region HTML Report Functions
+
+function global:New-HtmlReport {
+	param(
+		[string]      $Title,
+		[string]      $Filename    = "$($env:TEMP)\$(if (Get-Item -Path Function::Get-AdminConsoleName -Erroraction SilentlyContinue) {(Get-AdminConsoleName) -replace '[\s\[\]]',''} else {'PowerShell'})Report_$(Get-Date -Format hhmmss_ddMMyyyy).htm",
+		[switch]      $OpenFile,
+		[switch]      $OpenFolder,
+		[PSObject]    $Content     = $null
+	)
+	[string]                     $reportContents = $null
+	[string]                     $html           = $null
+	[string]                     $htmFilePath    = $null
+	[System.Diagnostics.Process] $process        = $null
+
+	if ($Content) {
+		if ($Content -is [ScriptBlock]) {
+			& $Content | ForEach-Object {
+				$reportContents += [string]$_
+			}
+			$reportContents.Trim("`n")
+		} else {
+			$reportContents = [string]$Content
+		}
+		$reportContents = $reportContents.Trim()
+	}
+
+	function Get-TableCssSettings {
+		param(
+			[string] $Display    = 'none',
+			[UInt16] $LeftIndent = 16,
+			[switch] $Frame
+		)
+		@"
+    display: $Display;
+    position: relative;
+    color: #000000;
+$(if ($Frame) {
+	@'
+    background-color: #f9f9f9;
+    border-left: #b1babf 1px solid;
+    border-right: #b1babf 1px solid;
+    border-top: #b1babf 1px solid;
+    border-bottom: #b1babf 1px solid;
+'@
+})
+    padding-left: ${LeftIndent}px;
+    padding-top: 4px;
+    padding-bottom: 5px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+"@
+	}
+	function Get-TableTitleCssSettings {
+		param(
+			[string] $BackgroundColor = '#0061bd'
+		)
+		@"
+    display: block;
+    position: relative;
+    height: 2em;
+    color: #ffffff;
+    background-color: $BackgroundColor;
+    border-left: #b1babf 1px solid;
+    border-right: #b1babf 1px solid;
+    border-top: #b1babf 1px solid;
+    border-bottom: #b1babf 1px solid;
+    padding-left: 5px;
+    padding-top: 8px;
+    margin-left: 0px;
+    margin-right: 0px;
+    font-family: Tahoma;
+    font-size: 8pt;
+    font-weight: bold;
+"@
+	}
+	function Get-SpanCssSettings {
+		@"
+    display: block;
+    position: absolute;
+    color: #ffffff;
+    top: 8px;
+    font-family: Tahoma;
+    font-size: 8pt;
+    font-weight: bold;
+    text-decoration: underline;
+"@
+	}
+
+	$html = @"
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<title>$Title</title>
+<meta http-equiv=Content-Type content='text/html; charset=windows-1252'></meta>
+<meta name="save" content="history"></meta>
+<style type="text/css">
+body {
+    margin-left: 4pt;
+    margin-right: 4pt;
+    margin-top: 6pt;
+    font-family: Tahoma;
+    font-size: 8pt;
+    font-weight: normal;
+}
+h1 {
+$(Get-TableTitleCssSettings -BackgroundColor '#0061bd')
+}
+h2 {
+$(Get-TableTitleCssSettings -BackgroundColor '#ad1c18')
+}
+h3 {
+$(Get-TableTitleCssSettings -BackgroundColor '#adadad')
+}
+span.expandableHeaderLink {
+$(Get-SpanCssSettings)
+}
+span.expandableHeaderLinkRightJustified {
+$(Get-SpanCssSettings)
+    right: 8px;
+}
+table {
+    table-layout: fixed;
+    font-size: 100%;
+    width: 100%;
+    color: #000000;
+}
+th {
+    color: #0061bd;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    vertical-align: top;
+    text-align: left;
+}
+td {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    vertical-align: top;
+}
+*{margin:0}
+div.visibleSection {
+$(Get-TableCssSettings -Display 'block' -Frame)
+}
+div.hiddenSection {
+$(Get-TableCssSettings -Display 'none' -Frame)
+}
+div.visibleSectionNoIndent {
+$(Get-TableCssSettings -Display 'block' -LeftIndent 0 -Frame)
+}
+div.hiddenSectionNoIndent {
+$(Get-TableCssSettings -Display 'none' -LeftIndent 0 -Frame)
+}
+div.visibleSectionNoFrame {
+$(Get-TableCssSettings -Display 'block' -LeftIndent 0)
+}
+div.hiddenSectionNoFrame {
+$(Get-TableCssSettings -Display 'none' -LeftIndent 0)
+}
+div.filler {
+    display: block;
+    position: relative;
+    color: #ffffff;
+    background: none transparent scroll repeat 0% 0%;
+    border-left: medium none;
+    border-right: medium none;
+    border-top: medium none;
+    border-bottom: medium none;
+    padding-top: 4px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: -1px;
+    font: 100%/8px Tahoma;
+}
+div.save {
+    behavior: url(#default#savehistory);
+}
+</style>
+<script type="text/javascript">
+function toggleVisibility(tableHeader) {
+    if (document.getElementById) {
+        var triggerLabel = tableHeader.firstChild;
+        while ((triggerLabel) && (triggerLabel.innerHTML != 'show') && (triggerLabel.innerHTML != 'hide')) {
+            triggerLabel = triggerLabel.nextSibling
+        }
+        if (triggerLabel) {
+            triggerLabel.innerHTML = (triggerLabel.innerHTML == 'hide' ? 'show' : 'hide');
+            associatedTable = tableHeader.nextSibling
+            while ((associatedTable) && (!(associatedTable.style))) {
+                associatedTable = associatedTable.nextSibling
+            }
+            if (associatedTable) {
+                associatedTable.style.display = (triggerLabel.innerHTML == 'hide' ? 'block' : 'none');
+            }
+        }
+    }
+}
+if (!document.getElementById) {
+    document.write('<style type="text/css">\n'+'\tdiv.hiddenSection {\n\t\tdisplay:block;\n\t}\n'+ '</style>');
+}
+</script>
+</head>
+<body>
+<b><font face="Arial" size="5">$Title</font></b>
+<hr size="8" color="#0061bd"></hr>
+<font face="Arial" size="1"><b>Generated with $(if (Get-Item -Path Function::Get-AdminConsoleName -Erroraction SilentlyContinue) {Get-AdminConsoleName} else {'PowerShell'})</b></font>
+<br />
+<font face="Arial" size="1">Report created on $(Get-Date)</font>
+<div class="filler"></div>
+<div class="filler"></div>
+<div class="filler"></div>
+<div class="save">
+$reportContents
+</div>
+</body>
+</html>
+"@
+	if (-not $Filename) {
+		$Filename = "$($env:TEMP)\$(if (Get-Item -Path Function::Get-AdminConsoleName -Erroraction SilentlyContinue) {(Get-AdminConsoleName) -replace '[\s\[\]]',''} else {'PowerShell'})Report_$(Get-Date -Format hhmmss_ddMMyyyy).htm"
+	}
+	$html | Out-File -Encoding Unicode -FilePath $Filename
+	$htmFilePath = (Get-Item -LiteralPath $Filename -ErrorAction SilentlyContinue).PSPath
+	if (-not $htmFilePath) {
+		throw "File '$Filename' was not created"
+	}
+	if ($OpenFile) {
+		if (Test-Path -LiteralPath "Registry::HKEY_CLASSES_ROOT\.htm" -ErrorAction SilentlyContinue) {
+			Invoke-Item -LiteralPath $htmFilePath
+		} else {
+			$process = New-Object System.Diagnostics.Process
+			$process.StartInfo.Filename = 'notepad.exe'
+			$process.StartInfo.Arguments = "`"$($htmFilePath.Replace('Microsoft.PowerShell.Core\FileSystem::',''))`""
+			if (-not $process.Start()) { 
+				throw 'Unable to launch notepad.exe'
+			}
+		}
+	}
+	if ($OpenFolder) {
+		$process = New-Object System.Diagnostics.Process
+		$process.StartInfo.Filename = 'explorer.exe'
+		$process.StartInfo.Arguments = "/select,`"$($htmFilePath.Replace('Microsoft.PowerShell.Core\FileSystem::',''))`""
+		if (-not $process.Start()) { 
+			throw 'Unable to launch explorer.exe'
+		}
+	}
+	Get-Item -LiteralPath $htmFilePath
+}
+
+function global:Add-HtmlReportSeparator {
+	@"
+<hr />
+"@
+}
+
+function global:Add-HtmlReportSubtitle {
+	param(
+		$Subtitle = $null
+	)
+	@"
+<table>
+<th><u>$Subtitle</u></th>
+</table>
+"@
+}
+
+function global:Add-HtmlReportSection {
+	param(
+		[string]   $Title         = $null,
+		[UInt16]   $Level         = 1,
+		[switch]   $NoIndent,
+		[switch]   $NoFrame,
+		[switch]   $Collapsible,
+		[switch]   $Expanded,
+		[PSObject] $Content       = $null
+	)
+	[UInt16] $headingLevel   = $(if (@(1,2,3) -notcontains $Level) {3} else {$Level})
+	[string] $sectionClass   = 'visibleSection'
+	[string] $reportContents = $null
+
+	if ($Title) {
+		if ($Collapsible) {
+			if (-not $Expanded) {
+				$sectionClass = 'hiddenSection'
+			}
+			@"
+<h$headingLevel style="cursor: pointer" onclick="toggleVisibility(this)">
+<span class="expandableHeaderLink">$Title</span>
+<span class="expandableHeaderLinkRightJustified">$(if ($Expanded) {'hide'} else {'show'})</span>
+</h$headingLevel>
+"@
+		} else {
+			@"
+<h$headingLevel>
+$Title
+</h$headingLevel>
+"@
+		}
+	}
+	if ($Content) {
+		if ($Content -is [ScriptBlock]) {
+			& $Content | ForEach-Object {
+				$reportContents += [string]$_
+			}
+			$reportContents = $reportContents.Trim("`n")
+		} else {
+			$reportContents = [string]$Content
+		}
+		$reportContents = $reportContents.Trim()
+		if ($NoFrame) {
+			@"
+<div class="${sectionClass}NoFrame">
+$reportContents
+</div>
+"@
+		} elseif ($NoIndent) {
+			@"
+<div class="${sectionClass}NoIndent">
+$reportContents
+</div>
+"@
+		} else {
+			@"
+<div class="$sectionClass">
+$reportContents
+</div>
+"@
+		}
+	}
+	@"
+<div class="filler"></div>
+"@		
+}
+
+function global:ConvertTo-HtmlReportTable {
+	param(
+		[PSObject] $InputObject       = $null,
+		[String[]] $Property          = $null,
+		[String[]] $GroupBy           = $null,
+		[string]   $Title             = $null,
+		[UInt16]   $Level             = 1,
+		[string]   $Indent            = 'AllLevels',
+		[switch]   $PrefixGroupNames,
+		[switch]   $Collapsible,
+		[switch]   $Expanded,
+		[PSObject] $AdditionalContent = $null
+	)
+	begin {
+		[PSObject] $processObject    = $null
+		[array]    $objectCollection = @()
+		[String[]] $innerHtml        = @()
+		[string]   $groupNamePrefix  = $null
+		[string]   $groupTitle       = $null
+		[string]   $html             = $null
+
+		if (@('None','OneLevel','AllLevels') -notcontains $Indent) {
+			throw "Cannot bind parameter ""Indent"". Specify one of the following values and try again. The possible values are ""None"", ""OneLevel"", and ""AllLevels""."
+			return
+		}
+	}
+	process {
+		if ($InputObject -and $_) {
+			throw 'The input object cannot be bound to any parameters for the command either because the command does not take pipeline input or the input and its properties do not match any of the parameters that take pipeline input.'
+			return
+		}
+		if ($processObject = $(if ($InputObject) {$InputObject} else {$_})) {
+			$objectCollection += $processObject
+		}
+	}
+	end {
+		if ($GroupBy) {
+			$innerHtml = $objectCollection | Group-Object -Property $GroupBy[0] | ForEach-Object {
+				$groupNamePrefix = $null
+				if ($PrefixGroupNames) {
+					$groupNamePrefix = "$($GroupBy[0]): "
+				}
+				$groupTitle = $(if ($_.Name) {"$groupNamePrefix$($_.Name)"} else {"$groupNamePrefix<i>Value not set</i>"})
+				$_.Group | ConvertTo-HtmlReportTable -Property $Property -GroupBy $(if ($GroupBy.Count -gt 1) {$GroupBy[1..$($GroupBy.Count - 1)]} else {$null}) -Title $groupTitle -Level ($Level + 1) -Indent $(if ($Indent -eq 'OneLevel') {'None'} else {$Indent}) -PrefixGroupNames:$PrefixGroupNames -Collapsible -Expanded:$Expanded
+			}
+			if (-not $innerHtml) {
+				$innerHtml = @()
+			}
+			$html = [string]::Join("`n",$innerHtml)
+		} else {
+			if ($Property) {
+				$innerHtml = $objectCollection | ConvertTo-Html -Property $Property
+			} else {
+				$innerHtml = $objectCollection | ConvertTo-Html
+			}
+			if (-not $innerHtml) {
+				$innerHtml = @()
+			}
+			$html = [string]::Join("`n",$innerHtml) -replace '(?s).*(<table>.*</table>).*','$1' -replace "<col>`n","<col></col>`n"
+		}
+		if ($AdditionalContent) {
+			if ($AdditionalContent -is [ScriptBlock]) {
+				$html += & $AdditionalContent
+			} else {
+				$html += [string]$AdditionalContent
+			}
+		}
+		Add-HtmlReportSection -Title $Title -Level $Level -NoIndent:$($Indent -eq 'None') -Collapsible:$Collapsible -Expanded:$Expanded -Content $html
+	}
+}
+
+function global:ConvertTo-HtmlReportList {
+	param(
+		[PSObject] $InputObject       = $null,
+		[String[]] $Property          = $null,
+		[String[]] $GroupBy           = $null,
+		[string]   $Title             = $null,
+		[UInt16]   $Level             = 1,
+		[string]   $Indent            = 'AllLevels',
+		[switch]   $PrefixGroupNames,
+		[switch]   $Collapsible,
+		[switch]   $Expanded,
+		[PSObject] $AdditionalContent = $null
+	)
+	begin {
+		[PSObject] $processObject    = $null
+		[array]    $objectCollection = @()
+		[String[]] $innerHtml        = @()
+		[string]   $groupNamePrefix  = $null
+		[string]   $groupTitle       = $null
+		[string]   $html             = $null
+		[UInt32]   $index            = 0
+		[string]   $itemHtml         = $null
+
+		if (@('None','OneLevel','AllLevels') -notcontains $Indent) {
+			throw "Cannot bind parameter ""Indent"". Specify one of the following values and try again. The possible values are ""None"", ""OneLevel"", and ""AllLevels""."
+			return
+		}
+	}
+	process {
+		if ($InputObject -and $_) {
+			throw 'The input object cannot be bound to any parameters for the command either because the command does not take pipeline input or the input and its properties do not match any of the parameters that take pipeline input.'
+			return
+		}
+		if ($processObject = $(if ($InputObject) {$InputObject} else {$_})) {
+			$objectCollection += $processObject
+		}
+	}
+	end {
+		if ($GroupBy) {
+			$innerHtml = $objectCollection | Group-Object -Property $GroupBy[0] | ForEach-Object {
+				$groupNamePrefix = $null
+				if ($PrefixGroupNames) {
+					$groupNamePrefix = "$($GroupBy[0]): "
+				}
+				$groupTitle = $(if ($_.Name) {"$groupNamePrefix$($_.Name)"} else {"$groupNamePrefix<i>Value not set</i>"})
+				$_.Group | ConvertTo-HtmlReportList -Property $Property -GroupBy $(if ($GroupBy.Count -gt 1) {$GroupBy[1..$($GroupBy.Count - 1)]} else {$null}) -Title $groupTitle -Level ($Level + 1) -Indent $(if ($Indent -eq 'OneLevel') {'None'} else {$Indent}) -PrefixGroupNames:$PrefixGroupNames -Collapsible -Expanded:$Expanded
+			}
+			if (-not $innerHtml) {
+				$innerHtml = @()
+			}
+			$html = [string]::Join("`n",$innerHtml)
+		} else {
+			$innerHtml = $(for ($index = 0; $index -lt $objectCollection.Count; $index++) {
+				$itemHtml = $(foreach ($item in $(if ($Property) {$Property} else {$objectCollection[$index].PSObject.Properties | Where-Object {$_.IsGettable} | ForEach-Object {$_.Name}})) {
+					@"
+<tr>
+<th width='25%'><b>${item}:</b></th>
+<td width='75%'>$([string]($objectCollection[$index].$item))</td>
+</tr>
+"@
+				})
+				if ($index -eq ($objectCollection.Count - 1)) {
+					$itemHtml
+				} else {
+					@"
+$itemHtml
+</table>
+$(Add-HtmlReportSeparator)
+<table>
+"@
+				}
+			})
+			if (-not $innerHtml) {
+				$innerHtml = @()
+			}
+			$html = @"
+<table>
+$([string]::Join("`n",$innerHtml))
+</table>
+"@
+		}
+		if ($AdditionalContent) {
+			if ($AdditionalContent -is [ScriptBlock]) {
+				$html += & $AdditionalContent
+			} else {
+				$html += [string]$AdditionalContent
+			}
+		}
+		Add-HtmlReportSection -Title $Title -Level $Level -NoFrame:$($Indent -eq 'None') -Collapsible:$Collapsible -Expanded:$Expanded -Content $html
+	}
+}
+
+#endregion
+
+#region Create enumerations used by the reporting engine.
+if (-not (Get-Variable 'AdminConsoleEnum' -Scope Global -ErrorAction SilentlyContinue)) {
+	$global:AdminConsoleEnum = @{}
+}
+if ($global:AdminConsoleEnum.Keys -notcontains 'ReportIndentationStyle') {
+	$global:AdminConsoleEnum['ReportIndentationStyle'] = New-Enum -Name 'ReportIndentationStyle' -AssemblyName 'AdminConsole' -Values 'None' 'One level' 'All levels'
+}
+if ($global:AdminConsoleEnum.Keys -notcontains 'ReportDataFormat') {
+	$global:AdminConsoleEnum['ReportDataFormat'] = New-Enum -Name 'ReportDataFormat' -AssemblyName 'AdminConsole' -Values 'Automatic (format chosen based on the number of properties selected)' 'Table' 'List'
+}
+#endregion]]></script>
+        </container>
+      </items>
+    </container>
+  </items>
+</configuration>

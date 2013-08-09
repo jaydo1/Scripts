@@ -1,0 +1,2 @@
+"VCname","DCname","Clustername","Total Physical Memory (GB)","Configured Memory (GB)","Available Memroy (GB)","Total CPU (Mhz)","Configured CPU (Mhz)","Available CPU (Mhz)","Total Disk Space (GB)","Configured Disk Space (GB)","Available Disk Space (GB)","Nr of hosts","Nr of VMs"
+"hpvvcs001","Bridge St","Production_Bridge","255.9","30.3","225.6","97376","4468","92908","599.5","437.4","162.1","4","10"

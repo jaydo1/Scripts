@@ -1,0 +1,6 @@
+"VCname","DCname","Clustername","Total Physical Memory (GB)","Configured Memory (GB)","Available Memroy (GB)","Total CPU (Mhz)","Configured CPU (Mhz)","Available CPU (Mhz)","Total Disk Space (GB)","Configured Disk Space (GB)","Available Disk Space (GB)","Nr of hosts","Nr of VMs"
+"hpvvcs005","Blacktown","Production_Blacktown","191.9","49.3","142.6","76576","3215","73361","999.5","794.4","205.1","2","13"
+"hpvvcs005","Bridge St","Production_Bridge","191.9","34.5","157.5","76576","1230","75346","599.5","437.7","161.8","2","10"
+"hpvvcs005","Eveleigh","Central Ave","216.0","25.2","190.8","63984","3121","60863","9448.8","7371.1","2077.6","2","3"
+"hpvvcs005","Oxford St","Production_Oxford","191.9","23.8","168.1","76576","1152","75424","399.8","327.3","72.5","2","7"
+"hpvvcs005","Parramatta","Parramatta_SSC","48.0","22.0","26.0","42656","3239","39417","2790.5","2532.7","257.8","2","6"

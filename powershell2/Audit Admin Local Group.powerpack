@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration predefined="False" id="a7e3a0b6-d316-4c8a-90cc-3e75b80cc3e3">
+  <container name="PowerPack Info" predefined="False" id="f5f11900-7edc-47f6-9efa-87abd9d5df07">
+    <items>
+      <container name="PowerPack Name" predefined="False" id="01f58085-d817-4d04-8316-f978e8674b7e">
+        <value>Audit Admin Local Group</value>
+      </container>
+      <container name="Description" predefined="False" id="2a7a09ae-54f3-468b-a188-7c3b7c5eb6e3" />
+      <container name="Required Snapins" predefined="False" id="2c4e1b31-79c0-46ad-aa27-eaacf1c10b59" />
+      <container name="PowerPack Version" predefined="False" id="158620d6-6c0c-4c58-a3b0-8810fd17c3b1">
+        <value>1.0.0.1</value>
+      </container>
+      <container name="PowerPack CreateDate" predefined="False" id="81ad5d68-143b-4c79-8a95-bef6c941282b">
+        <value>2010-11-19 15:31:19Z</value>
+      </container>
+      <container name="Update URL" predefined="False" id="7600fdf1-ca11-4145-87fa-f3bc6b49d0f2" />
+      <container name="PowerPack Home Page" predefined="False" id="8ae73fa1-67e8-4d3f-ad11-8245f7f5267f" />
+      <container name="PowerPack Icon" predefined="False" id="2840a004-5414-4758-b256-81fdcd9f8a87" />
+      <container name="Console Version" predefined="False" id="7b082250-5a98-48f5-8a3f-6ab5f1e4d90e">
+        <value>2.4</value>
+      </container>
+    </items>
+  </container>
+  <items>
+    <container name="Navigation Tree" predefined="False" id="b3b2283e-6f58-40c6-86b6-f01cd7f060fa">
+      <items>
+        <container name="Audit Admin Local Group" Description="" predefined="False" ResultView="6daa7380-b4f9-422e-a7b7-1a86193e14eb" id="37720a99-ebd8-4e90-88f5-3089b5407acf" type="Script@" returntype="System.Management.Automation.PSCustomObject#@@@#System.Object">
+          <script><![CDATA[# List local group members on the local or a remote computer
+
+$computerName = Read-Host 'Enter computer name or press <Enter> for localhost'
+
+$localgroupName = 'Administrators'
+
+if ($computerName -eq "") {$computerName = "$env:computername"}
+
+if([ADSI]::Exists("WinNT://$computerName/$localGroupName,group")) {
+
+     $group = [ADSI]("WinNT://$computerName/$localGroupName,group")
+
+     $members = @()
+     $Group.Members() |
+     % {
+         $AdsPath = $_.GetType().InvokeMember("Adspath", 'GetProperty', $null, $_, $null)
+         # Domain members will have an ADSPath like WinNT://DomainName/UserName.
+         # Local accounts will have a value like WinNT://DomainName/ComputerName/UserName.
+         $a = $AdsPath.split('/',[StringSplitOptions]::RemoveEmptyEntries)
+         $name = $a[-1]
+         $domain = $a[-2]
+         $class = $_.GetType().InvokeMember("Class", 'GetProperty', $null, $_, $null)
+
+         $member = New-Object PSObject
+         $member | Add-Member -MemberType NoteProperty -Name "Name" -Value $name
+         $member | Add-Member -MemberType NoteProperty -Name "Domain" -Value $domain
+         $member | Add-Member -MemberType NoteProperty -Name "Class" -Value $class
+
+         $members += $member
+     }
+     if ($members.count -eq 0) {
+         Write-Host "Group '$computerName\$localGroupName' is empty."
+     }
+     else {
+         Write-Host "Group '$computerName\$localGroupName' contains these members:"
+         $members | Format-Table Name,Domain,Class -autosize
+     }
+}
+else {
+     Write-Warning "Local group '$localGroupName' doesn't exist on computer '$computerName'"
+}
+
+]]></script>
+          <items>
+            <container name="properties_a807f902-4b43-4b22-86d8-724abc4c3d4a" predefined="False">
+              <items>
+                <container name="Name" predefined="False">
+                  <script><![CDATA[100]]></script>
+                </container>
+                <container name="Domain" predefined="False">
+                  <script><![CDATA[100]]></script>
+                </container>
+                <container name="Class" predefined="False">
+                  <script><![CDATA[100]]></script>
+                </container>
+              </items>
+            </container>
+          </items>
+        </container>
+      </items>
+    </container>
+    <container name="Actions" predefined="False" id="1ef02fe0-c6fc-4cdc-88bc-a9e4313bee18">
+      <items>
+        <container name="Links" predefined="False" id="481eccc0-43f8-47b8-9660-f100dff38e14" />
+        <container name="Actions" predefined="False" id="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece">
+          <items>
+            <container name="Import" Description="" predefined="False" id="f7f60b0c-213e-4a75-ac8f-8c9f4efec071" type="Action@" RequireSelection="Yes" DisplayResults="Refresh">
+              <script><![CDATA[# Saisissez un script PowerShell ici
+$input | ForEach-Object {
+      # Ajoutez votre traitement pour chaque item du panneau de sélection
+      # La variable $_ représente chaque objet individuel
+}
+
+& {
+    
+	param(
+		$ComputerName = (Import-Csv c:\Serveurs.csv)
+	)
+Add-AdminConsoleRemoteComputerContainerNodes $ComputerName $Domain
+
+}]]></script>
+              <Types>
+                <type>System.Management.Automation.PSCustomObject</type>
+              </Types>
+            </container>
+          </items>
+        </container>
+        <container name="Actions: Common" predefined="False" id="6669cb81-df60-4f11-9d8f-8ab7c003dd1b" />
+        <container name="Skype" predefined="False" id="16e671d0-3394-45fa-bcf1-a3bbc2b9c6f7" />
+        <container name="General" predefined="False" id="3b5923b3-9344-4f66-a5ce-9ec848c8cc5a" />
+        <container name="Settings" predefined="False" id="210e2076-00ce-4671-9ed3-0e1571ebbc13" />
+        <container name="Search options" predefined="False" id="eda13588-d57c-4139-bd5c-84c96df01f86" />
+        <container name="Related information" predefined="False" id="0869d252-c4d8-45f9-ac2e-72a937a9d1bd" />
+        <container name="Security" predefined="False" id="ce69719b-6b2e-4f96-8f4d-caa0e3f016e9" />
+        <container name="Power management" predefined="False" id="ad118cf8-8d55-49f9-a84c-2f6ac51e5066" />
+        <container name="Toolkit" predefined="False" id="b50365e5-1fb0-458c-99ee-020a576a0003" />
+        <container name="Export" predefined="False" id="85f4135d-1659-4bec-9735-56cac123aefd" />
+        <container name="Reporting" predefined="False" id="618f1100-3ffe-49c5-9b8b-efb14cf0c7f5" />
+        <container name="New Category" predefined="False" id="6207e7fc-6eec-4205-b0ee-d2000b871380" />
+        <container name="Outils" predefined="False" id="ae6398ec-591f-448b-a656-b38d36a59018" />
+        <container name="Job Control" predefined="False" id="e1584030-33bb-4f18-a52a-9fe36ee8aae3" />
+        <container name="Action" predefined="False" id="36780e9d-7ddf-4e91-b74d-cd0262eb04d0" />
+        <container name="Test" predefined="False" id="bb99c506-f9df-4a6e-8cea-f35565b151fd" />
+        <container name="Tests perso" predefined="False" id="b88b31cf-5fe4-42c8-98fb-41a7172a0f2e" />
+        <container name="Scripts en Dev" predefined="False" id="2ad597a8-267b-4f1b-ad8c-5754146f821c" />
+        <container name="Script Test" predefined="False" id="51dc5528-efb1-4b17-a035-d992f86c2454" />
+      </items>
+    </container>
+    <container name="Icons" predefined="False" id="9355c471-85b2-4b9a-92db-69873837cd8d" />
+    <container name="Types" predefined="False" id="37fc9e95-a3a2-4f53-a2d4-d29fe752995c">
+      <items>
+        <container name="System.Object" predefined="False" id="8cd04df9-40df-41c2-b3ca-896145e93591">
+          <items>
+            <container name="Links" predefined="False" id="1a03a76d-a6da-4a4c-9bee-0c8bb8a9f8c5" type="481eccc0-43f8-47b8-9660-f100dff38e14" />
+            <container name="Actions" predefined="False" id="63ec7ce3-8393-483f-a509-d5fd4ee3a6eb" type="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" />
+            <container name="Actions: Common" predefined="False" id="5aee994d-6eb0-4166-8733-82dd4de78482" type="6669cb81-df60-4f11-9d8f-8ab7c003dd1b" />
+          </items>
+        </container>
+      </items>
+    </container>
+    <container name="Scripts" predefined="False" id="c4ac93e0-f9c3-4e70-9e77-79210fee0239" />
+    <container name="Chart Presets" predefined="False" id="686d9542-3d11-48d0-bb48-f8a030b9963d" />
+  </items>
+</configuration>

@@ -1,0 +1,1 @@
+﻿Get-VDPortgroup | select name,VlanConfiguation | sort Vlanconfiguation | export-Csv C:\what everyou want to call it.csv

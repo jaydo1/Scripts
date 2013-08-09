@@ -1,0 +1,773 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration id="1db5c198-9783-4dfb-a9ce-80dfc69143b3">
+  <container id="aed4c130-e3ec-4f8c-9ed4-a85bf45336c8" name="SnapinInfo">
+    <items>
+      <container id="2a7a09ae-54f3-468b-a188-7c3b7c5eb6e3" name="welcome">
+        <script><![CDATA[Allows you to find directories that are using up space on file system.
+Allows you to find users that are using up space on file system  through file ownership.
+Allows you to find files of specific size using up file system space.
+Allows you to find files of specific age using up space on file system, as well as temp and compressed files.
+You will be able to select and compress desired files to a zip file.]]></script>
+        <items />
+      </container>
+      <container id="2c4e1b31-79c0-46ad-aa27-eaacf1c10b59" name="Required Snapins">
+        <items />
+      </container>
+      <container id="7b082250-5a98-48f5-8a3f-6ab5f1e4d90e" name="PowerGUI Version">
+        <value>1.5.1.512</value>
+        <items />
+      </container>
+    </items>
+  </container>
+  <items>
+    <container id="b3b2283e-6f58-40c6-86b6-f01cd7f060fa" name="Navigation Tree">
+      <items>
+        <container id="08b626b5-21f9-40a8-81b3-a8b6f2869f22" parent="c3c2f139-eb17-4cf4-87de-2575eaead077" name="FileSystemMgmt" type="Folder">
+          <items>
+            <container id="0032ddd3-ac86-48c5-bc9e-b75525bd6f72" parent="08b626b5-21f9-40a8-81b3-a8b6f2869f22" name="Get-DirSize" type="Script@System.IO.DirectoryInfo" returntype="System.IO.DirectoryInfo">
+              <script><![CDATA[
+trap
+{
+Write-Output $("TRAPPED: " + $_.Exception.GetType().FullName);
+Write-Output $("TRAPPED: " + $_.Exception.Message);
+
+continue;
+
+}
+
+Function Get-PromptParam($name, $mandatory, $defaultValue, $secure) 
+{
+
+$param = ([System.Management.Automation.Host.FieldDescription][string]$name) 
+$param.IsMandatory = $mandatory
+
+$param.DefaultValue = $defaultValue
+
+if($secure) {$param.SetParameterType([Type]"System.Security.SecureString")} 
+$param
+
+}# End Function Get-PromptParam
+
+Function PromptForParams($Message){ 
+$genericType = [Type]("System.Collections.ObjectModel.Collection" + '`' + "1")
+
+$closedType = $genericType.MakeGenericType([Type]"System.Management.Automation.Host.FieldDescription") 
+$AskFieldCol = [Activator]::CreateInstance($closedType, $false) 
+$AskFieldCol.Add((Get-PromptParam "Directory" $true $(pwd) $false))
+#$AskFieldCol.Add((Get-PromptParam "Parent" $false))
+$host.ui.Prompt("",$Message,$AskFieldCol) 
+}# End Function PromptForParams
+
+
+Function global:Get-DiskUsage {
+param(
+	$dir
+ )
+
+$folder = Get-Item -Force $dir
+if (($folder.GetType().Name -eq "DirectoryInfo") -and ($folder.GetFiles().Count -eq 0) -and ($folder.GetDirectories().Count -eq 0)){
+
+$folder = $folder | Add-Member -MemberType "NoteProperty" -Name "TotalSize" -Value 0 -PassThru 
+}
+else
+{
+
+
+$dirsum = get-childitem -force -Recurse $folder.FullName | measure-object -property length -sum | select @{Name="Name";Expression={$folder.FullName}},Sum
+if ($dirsum -eq $null)
+{
+
+$folder = $folder | Add-Member -MemberType "NoteProperty" -Name "TotalSize" -Value 0 -PassThru
+}# if $dirsum -eq $null
+else
+{
+	if ($tsize) 
+	{ 
+	$result = $dirsum
+	}
+	else
+	{	
+	$result = $dirsum |  foreach-object { if ( $_.Sum -eq 0) { $_.Sum = "0KB"}elseif ( $_.Sum -le 999KB) {$_.Sum = ([string]::Format("{0:#.##}",($_.Sum)/1KB)) + "KB" ; $_ } elseif ( $_.Sum -le 999MB) {$_.Sum = ([string]::Format("{0:#.##}",($_.Sum)/1MB)) + "MB" ; $_ } elseif ( $_.Sum -le 999GB) {$_.Sum = ([string]::Format("{0:#.##}",($_.Sum)/1GB)) + "GB" ; $_ }else { $_Sum = "0KB"; $_}}
+	}
+$total = $result.Sum
+
+$folder = $folder | Add-Member -MemberType "NoteProperty" -Name "TotalSize" -Value $total -PassThru 
+}#else $dirsum -eq $null
+
+} 
+return $folder
+
+}# End Function Get-DiskUsage
+
+
+
+Function global:Add-PowerGUIDirSizeProviderItemNode {
+	param(
+		$item,
+		[string]$parentPath
+	)
+
+	$selectedNode = [Quest.PowerGUI.HostFactory]::Current.Application.Navigation.CurrentItem;
+	
+	$itm = $(Get-DiskUsage $item.FullName)
+	if ($item.PSIsContainer) {
+		[string]$path = $item.FullName;
+		$childNode = $selectedNode.AddChild();
+		$childNode.Name = $item.PSChildName;
+		$childNode.Script = "Get-ChildItem '$path' -Force | ForEach-Object { Add-PowerGUIDirSizeProviderItemNode `$_ '$path' }"
+		$selectedNode.Expand()
+	}
+	$itm 
+} # End Function global:Add-PowerGUIDirSizeProviderItemNode
+
+
+
+
+Function global:Add-PowerGUIDiskUsage {
+	param(
+		# $d is Directory parameter
+		$d='.'
+	)
+
+	$i = $(Get-DiskUsage $d)
+	$selectedNode = [Quest.PowerGUI.HostFactory]::Current.Application.Navigation.CurrentItem
+	$i
+	
+	Get-ChildItem $d -Force -ErrorAction SilentlyContinue | ? { $_.GetType().Name -eq "DirectoryInfo" } | ForEach-Object {
+
+		$childNode = $selectedNode.AddChild()
+		$childNode.Name = $_.Name
+		$pth = $_.FullName
+		$child = $(Get-DiskUsage $_.FullName)
+		$childNode.Script = "Get-ChildItem '$pth' -Force -ErrorAction SilentlyContinue | ForEach-Object { Add-PowerGUIDirSizeProviderItemNode `$_ '$pth'}" 
+		$selectedNode.Expand()
+		$child
+	}
+} # End Function global:Add-PowerGUIDiskUsage
+
+if ($global:bit -ne $null)
+{
+[bool]$tsize = $global:bit
+}
+else { [bool]$tsize = $false }
+
+if (($global:fdir -eq "") -or ($global:fdir -eq $null))
+{
+# $p is parameter placeholder
+$p = PromptForParams "After adding size and converting to KB,MB,or GB `nthis will add property [TotalSize] to each file or `ndirectory object.
+Enter the Directory you want to process."
+$global:fdir = $p["Directory"]
+}
+
+if (($global:fdir -ne "") -and (Test-path $global:fdir))
+{
+Add-PowerGUIDiskUsage $global:fdir
+}
+else
+{
+"CANCELED, NO PARAMETER ENTERED OR PATH INVALID"
+}
+]]></script>
+              <items />
+            </container>
+            <container id="6b1db954-1d6c-4751-b9e5-e0b9694e88d3" parent="08b626b5-21f9-40a8-81b3-a8b6f2869f22" name="Get-User_Usage" type="Script@UserUsage" returntype="UserUsage">
+              <script><![CDATA[trap
+{
+Write-Output $("TRAPPED: " + $_.Exception.GetType().FullName);
+Write-Output $("TRAPPED: " + $_.Exception.Message);
+
+continue;
+
+}# End Trap
+
+Function Get-PromptParam($name, $mandatory, $defaultValue, $secure) 
+{
+
+$param = ([System.Management.Automation.Host.FieldDescription][string]$name) 
+$param.IsMandatory = $mandatory
+
+$param.DefaultValue = $defaultValue
+
+if($secure) {$param.SetParameterType([Type]"System.Security.SecureString")} 
+$param
+
+}
+# End Function Get-PromptParam
+
+Function PromptForParams($Message){ 
+$genericType = [Type]("System.Collections.ObjectModel.Collection" + '`' + "1")
+
+$closedType = $genericType.MakeGenericType([Type]"System.Management.Automation.Host.FieldDescription") 
+$AskFieldCol = [Activator]::CreateInstance($closedType, $false) 
+$AskFieldCol.Add((Get-PromptParam "Directory" $true $(pwd) $false))
+#$AskFieldCol.Add((Get-PromptParam "Parent" $false))
+$host.ui.Prompt("",$Message,$AskFieldCol) 
+}
+# End Function PromptForParams
+
+Function global:Get-UserUsage
+{
+param ( $path )
+
+$dir = Get-Item $path
+$grpfiles = Get-ChildItem -Force -Recurse $dir.FullName |  ForEach { if ($_.GetType().Name -ne "DirectoryInfo") {Add-Member -InputObject $_ -Name Owner -MemberType NoteProperty -Value (Get-Acl $_.FullName).owner -PassThru}}
+$ownedfiles = $null;
+
+	if (($dir.GetType().Name -eq "DirectoryInfo") -and ($dir.GetFiles().Count -eq 0) -and ($dir.GetDirectories().Count -eq 0)){
+		
+	$row = 0 | Select Owner,TotalSize,Path
+	$row.PSObject.TypeNames.Clear()
+	$row.PSObject.TypeNames.Insert(0,'UserUsage')
+	$row.Owner = ""
+	$row.TotalSize = "0 KB"
+	$row.Path = $dir.FullName
+	$userusage = $row
+	}
+	else
+	{	
+
+
+	$grpfiles = $grpfiles | Group-Object -Property Owner
+	
+	$userusage = @()
+	if ( $grpfiles.GetType().BaseType.Name -eq "Array")
+	{
+	
+	For ($i=0;$i -lt $grpfiles.Count;$i++)
+	{
+	$sumfiles = $grpfiles[$i].Group | measure-object -property length -sum | select @{Name="Name";Expression={$dir.FullName}},Sum
+	if ($sumfiles -eq $null)
+	{
+	$ownedfiles = $grpfiles[$i].Group | Add-Member -MemberType "NoteProperty" -Name "TotalSize" -Value 0 -PassThru
+	}
+	else
+	{
+			if ($tsize) 
+			{ 
+			$ownedfiles = $sumfiles
+			}
+			else
+			{	
+			$ownedfiles = $sumfiles | foreach-object { if ( $_.Sum -eq 0) { $_.Sum = "0 KB"}elseif ( $_.Sum -le 999KB) {$_.Sum = ([string]::Format("{0:#.##}",($_.Sum)/1KB)) + " KB" ; $_ } elseif ( $_.Sum -le 999MB) {$_.Sum = ([string]::Format("{0:#.##}",($_.Sum)/1MB)) + " MB" ; $_ } elseif ( $_.Sum -le 999GB) {$_.Sum = ([string]::Format("{0:#.##}",($_.Sum)/1GB)) + " GB" ; $_ }else { $_Sum = "0 KB"; $_}}
+			}
+	}
+	
+	$total = $ownedfiles.Sum
+	
+	$grpfiles[$i].Group | Add-Member -MemberType "NoteProperty" -Name "TotalSize" -Value $total
+		
+	$row = 0 | Select Owner,TotalSize,Path
+	$row.Owner = $grpfiles[$i].Name
+	$row.TotalSize = $total
+	$row.Path = $dir.FullName
+	$userusage += $row
+	}
+	}
+	else
+	{
+	$sumfiles = $grpfiles.Group | measure-object -property length -sum | select @{Name="Name";Expression={$dir.FullName}},Sum
+	
+	if ($sumfiles -eq $null)
+	{
+	$ownedfiles = $grpfiles.Group | Add-Member -MemberType "NoteProperty" -Name "TotalSize" -Value "0 KB" -PassThru
+	}
+	else
+	{
+			if ($tsize) 
+			{ 
+			$ownedfiles = $sumfiles
+			}
+			else
+			{	
+			$ownedfiles = $sumfiles | foreach-object { if ( $_.Sum -eq 0) { $_.Sum = "0 KB"}elseif ( $_.Sum -le 999KB) {$_.Sum = ([string]::Format("{0:#.##}",($_.Sum)/1KB)) + " KB" ; $_ } elseif ( $_.Sum -le 999MB) {$_.Sum = ([string]::Format("{0:#.##}",($_.Sum)/1MB)) + " MB" ; $_ } elseif ( $_.Sum -le 999GB) {$_.Sum = ([string]::Format("{0:#.##}",($_.Sum)/1GB)) + " GB" ; $_ }else { $_Sum = "0 KB"; $_}}
+			}
+	}
+	
+	$total = $ownedfiles.Sum
+	# Create custom object to hold desired Properties ( Owner,TotalSize,Path)
+	$row = 0 | Select Owner,TotalSize,Path
+	$row.PSObject.TypeNames.Clear()
+	$row.PSObject.TypeNames.Insert(0,'UserUsage')
+	$row.Owner = $grpfiles.Name
+	$row.TotalSize = $total
+	$row.Path = $dir.FullName
+	$userusage = $row
+	}
+} # else if (($dir.GetType().Name -eq "DirectoryInfo")
+
+  return $userusage 
+ 
+} # End Function Get-UserUsage
+
+Function global:Add-PowerGUIUsageByUser {
+	param(
+		# $d is directory parameter
+		$d='.'
+	)
+
+	$i = $(Get-UserUsage $d)
+	$selectedNode = [Quest.PowerGUI.HostFactory]::Current.Application.Navigation.CurrentItem
+	$i
+	$d = Get-Item $d
+	if (($d.GetType().Name -eq "DirectoryInfo") -and ($d.GetFiles().Count -eq 0) -and ($d.GetDirectories().Count -eq 0))
+	{
+		# No Children
+		
+	}
+	else
+	{
+		Get-ChildItem $d -Force -ErrorAction SilentlyContinue | ? { $_.GetType().Name -eq "DirectoryInfo" } | ForEach-Object {
+
+		$childNode = $selectedNode.AddChild()
+		$childNode.Name = $_.Name
+		# path
+		$pth = $_.FullName
+		$childNode.Script = "Add-PowerGUIUsageByUser '$pth'" 
+		$selectedNode.Expand()
+		
+		}
+	} # else
+} # End Function lobal:Add-PowerGUIUsageByUser
+
+if ($global:bit -ne $null)
+{
+[bool]$tsize = $global:bit
+}
+else { [bool]$tsize = $false }
+
+
+if (($global:fdir -eq "") -or ($global:fdir -eq $null))
+{
+# prompt place holder $p
+$p = PromptForParams "This will list total space used per user that owns files.
+Enter the [Directory/Share] you want to process."
+$global:fdir = $p["Directory"]
+}
+
+Add-PowerGUIUsageByUser $global:fdir
+]]></script>
+              <items />
+            </container>
+            <container id="826e687a-d7a2-4506-aefc-3ad460284bc1" parent="08b626b5-21f9-40a8-81b3-a8b6f2869f22" name="Get-LargeFiles" type="Script@System.IO.FileInfo" returntype="System.IO.FileInfo">
+              <script><![CDATA[trap
+{
+Write-Output $("TRAPPED: " + $_.Exception.GetType().FullName);
+Write-Output $("TRAPPED: " + $_.Exception.Message);
+
+continue;
+
+}# End Trap
+
+Function Get-PromptParam($name, $mandatory, $defaultValue, $intg) 
+{
+
+$param = ([System.Management.Automation.Host.FieldDescription][string]$name) 
+$param.IsMandatory = $mandatory
+
+$param.DefaultValue = $defaultValue
+
+if($intg) {$param.SetParameterType([Type]"System.Int32")} 
+$param
+
+}# End Function Get-PromptParam
+
+Function PromptForParams($Message){ 
+$genericType = [Type]("System.Collections.ObjectModel.Collection" + '`' + "1")
+
+$closedType = $genericType.MakeGenericType([Type]"System.Management.Automation.Host.FieldDescription") 
+$AskFieldCol = [Activator]::CreateInstance($closedType, $false) 
+$AskFieldCol.Add((Get-PromptParam "Directory" $true $($global:fdir)))
+$AskFieldCol.Add((Get-PromptParam "FileSize" $true ($global:fsize) $true))
+$AskFieldCol.Add((Get-PromptParam "Measurement" ($global:fmz) "KB"))
+$host.ui.Prompt("",$Message,$AskFieldCol) 
+}# End Function PromptForParams
+
+$largefiles =0
+if ((($global:fdir -eq "") -or ($global:fdir -eq $null)) -or ($global:fmz -eq 0)-or  (($global:fsize -eq "") -or ($global:fsize -eq $null)))
+{
+# $p is parameter place holder
+$p = PromptForParams "Enter the [Directory/Share] you want to process,minimum [File Size] and [Measurement(KB,MB,or GB)] to return."
+$min = 0
+$global:fdir = $p["Directory"]
+$global:fmz = $p["Measurement"]
+$global:fsize = $p["FileSize"]
+} #if 
+
+switch ($global:fmz)
+{
+	"MB" { $global:fmz = [int]$($global:fsize) * 1MB; }
+	"GB" { $global:fmz = [int]$($global:fsize) * 1GB; }
+	default  { $global:fmz = [int]$($global:fsize) * 1KB; }
+}
+
+
+$largefiles = get-ChildItem -path $global:fdir -recurse | ? { $_.GetType().Name -eq "FileInfo" } | where-Object {$_.Length -gt $global:fmz} | sort-Object -property length -Descending
+
+$largefiles
+]]></script>
+              <items />
+            </container>
+            <container id="c57c2b06-ce2e-4b9d-ade1-0352ef40f162" parent="08b626b5-21f9-40a8-81b3-a8b6f2869f22" name="Get-TempFiles" type="Script@System.String" returntype="System.String">
+              <script><![CDATA[trap
+{
+Write-Output $("TRAPPED: " + $_.Exception.GetType().FullName);
+Write-Output $("TRAPPED: " + $_.Exception.Message);
+
+continue;
+
+}
+
+Function Get-PromptParam($name, $mandatory, $defaultValue, $intg) 
+{
+
+$param = ([System.Management.Automation.Host.FieldDescription][string]$name) 
+$param.IsMandatory = $mandatory
+
+$param.DefaultValue = $defaultValue
+
+if($intg) {$param.SetParameterType([Type]"System.Int32")} 
+$param
+
+}# End Function Get-PromptParam
+
+Function PromptForParams($Message){ 
+$genericType = [Type]("System.Collections.ObjectModel.Collection" + '`' + "1")
+
+$closedType = $genericType.MakeGenericType([Type]"System.Management.Automation.Host.FieldDescription") 
+$AskFieldCol = [Activator]::CreateInstance($closedType, $false) 
+$AskFieldCol.Add((Get-PromptParam "Directory" $true $(pwd) $false))
+$host.ui.Prompt("",$Message,$AskFieldCol) 
+}# End Function PromptForParams
+
+
+if (($global:fdir -eq "") -or ($global:fdir -eq $null))
+{
+$p = PromptForParams "Enter the [Directory/Share] you want to get temp files for."
+$global:fdir = $p["Directory"]
+}#if
+
+$tmpfiles = get-ChildItem -path $global:fdir -recurse -Include "*.tmp","*.temp"
+
+if (($tmpfiles -ne "") -and ($tmpfiles -ne $null))
+{
+$tmpfiles
+}
+else
+{
+"No temp files found"
+}
+
+]]></script>
+              <items>
+                <container id="abf3d74e-faff-4bf0-8bbb-40dee1679b19" name="properties_a807f902-4b43-4b22-86d8-724abc4c3d4a">
+                  <items>
+                    <item id="806e42be-9af4-47a8-9fbb-ccd842aa9107" name="Length" />
+                    <item id="8cf1864a-b4a6-496d-b771-e4ef3bbdf728" name="&lt;Value&gt;" />
+                  </items>
+                </container>
+              </items>
+            </container>
+            <container id="05cd24f3-20cb-45aa-b53a-0c06c5faef2d" parent="08b626b5-21f9-40a8-81b3-a8b6f2869f22" name="Get-OldFiles" type="Script@System.IO.FileInfo" returntype="System.IO.FileInfo">
+              <script><![CDATA[trap
+{
+Write-Output $("TRAPPED: " + $_.Exception.GetType().FullName);
+Write-Output $("TRAPPED: " + $_.Exception.Message);
+
+continue;
+
+}
+
+Function Get-PromptParam($name, $mandatory, $defaultValue, $intg) 
+{
+
+$param = ([System.Management.Automation.Host.FieldDescription][string]$name) 
+$param.IsMandatory = $mandatory
+
+$param.DefaultValue = $defaultValue
+
+if($intg) {$param.SetParameterType([Type]"System.Int32")} 
+$param
+
+}# End Function Get-PromptParam
+
+Function PromptForParams($Message){ 
+$genericType = [Type]("System.Collections.ObjectModel.Collection" + '`' + "1")
+
+$closedType = $genericType.MakeGenericType([Type]"System.Management.Automation.Host.FieldDescription") 
+$AskFieldCol = [Activator]::CreateInstance($closedType, $false) 
+$AskFieldCol.Add((Get-PromptParam "Directory" $true $($global:fdir) $false))
+$AskFieldCol.Add((Get-PromptParam "Days" $true ($global:rdays) $true))
+$host.ui.Prompt("",$Message,$AskFieldCol) 
+}
+# End Function PromptForParams
+
+$today = [DateTime]::Now
+if (($global:fdir -eq "") -or ($global:fdir -eq $null) -or ($global:fdir -eq 0) -or ($global:rdays -eq $null))
+{
+$p = PromptForParams "Enter the [Directory/Share] you want to process and minimum [Age(in Days)] of files."
+
+$global:fdir = $p["Directory"]
+$global:rdays = $p["Days"]
+}
+
+$directory = $($global:fdir).Replace("'","")
+# days old or older the file must be
+$days = -$global:rdays
+
+
+$oldfiles = get-ChildItem -recurse -Force -ErrorAction SilentlyContinue -Path $directory  | ? { $_.GetType().Name -eq "FileInfo" } | ? { $today.AddDays($days) -gt $_.LastWriteTime } | Sort-Object -Property LastWriteTime
+
+$oldfiles
+]]></script>
+              <items />
+            </container>
+            <container id="5f4d022d-e2a8-4496-8e26-796683dffc09" parent="08b626b5-21f9-40a8-81b3-a8b6f2869f22" name="Get-CompressedFiles" type="Script@System.String" returntype="System.IO.FileInfo">
+              <script><![CDATA[trap
+{
+Write-Output $("TRAPPED: " + $_.Exception.GetType().FullName);
+Write-Output $("TRAPPED: " + $_.Exception.Message);
+
+continue;
+
+}
+
+Function Get-PromptParam($name, $mandatory, $defaultValue, $intg) 
+{
+
+$param = ([System.Management.Automation.Host.FieldDescription][string]$name) 
+$param.IsMandatory = $mandatory
+
+$param.DefaultValue = $defaultValue
+
+if($intg) {$param.SetParameterType([Type]"System.Int32")} 
+$param
+
+}# End Function Get-PromptParam
+
+Function PromptForParams($Message){ 
+$genericType = [Type]("System.Collections.ObjectModel.Collection" + '`' + "1")
+
+$closedType = $genericType.MakeGenericType([Type]"System.Management.Automation.Host.FieldDescription") 
+$AskFieldCol = [Activator]::CreateInstance($closedType, $false) 
+$AskFieldCol.Add((Get-PromptParam "Directory" $true $($global:fdir) $false))
+$host.ui.Prompt("",$Message,$AskFieldCol) 
+}# End Function PromptForParams
+
+if (($global:fdir -eq "") -or ($global:fdir -eq $null))
+{
+# parameter placeholder $p
+$p = PromptForParams "Enter the [Directory/Share] you want to get temp files for."
+$global:fdir = $p["Directory"]
+}
+
+
+$compressedfiles = get-ChildItem -path $global:fdir -recurse -Include "*.zip","*.rar",".tar"
+
+if (($compressedfiles -ne "") -and ($compressedfiles -ne $null))
+{
+$compressedfiles
+}
+else
+{
+"No Compressed files found"
+}
+]]></script>
+              <items />
+            </container>
+            <container id="971608bc-5918-467b-8f12-85bbedb740c8" parent="08b626b5-21f9-40a8-81b3-a8b6f2869f22" name="Quotas" type="Folder">
+              <items>
+                <container id="535ef7b5-dd53-42f0-9ead-499609bb4b57" parent="971608bc-5918-467b-8f12-85bbedb740c8" name="Get-Quotas" type="Script@System.Management.ManagementObject#root\CIMV2\Win32_DiskQuota">
+                  <script><![CDATA[
+$global:strComputer = "."
+
+$objQuotas = get-wmiobject -class "Win32_DiskQuota" -namespace "root\CIMV2" -computername $global:strComputer
+
+$objQuotas]]></script>
+                  <items />
+                </container>
+              </items>
+            </container>
+          </items>
+        </container>
+      </items>
+    </container>
+    <container id="1ef02fe0-c6fc-4cdc-88bc-a9e4313bee18" name="Actions">
+      <items>
+        <container id="481eccc0-43f8-47b8-9660-f100dff38e14" name="Links">
+          <items>
+            <container id="9bbd4c4d-ec40-4938-8751-6cd359ace66a" parent="481eccc0-43f8-47b8-9660-f100dff38e14" name="Owned Files" type="UserUsage" returntype="System.IO.FileInfo">
+              <script><![CDATA[# Type in a PowerShell script here
+$input | ForEach-Object {
+		$owner = $_.Owner
+		Get-ChildItem -Force -Recurse -Path $_.Path | ? { $_.GetType().Name -eq "FileInfo" } | Foreach { Add-Member -InputObject $_ -Name Owner -MemberType NoteProperty -Value (Get-Acl $_.FullName).owner -PassThru | ? { $_.Owner -eq $owner } }
+				
+		}]]></script>
+              <items>
+                <container id="b13e9c1e-f1d4-46eb-9a0b-8d6c96945649" name="properties_a807f902-4b43-4b22-86d8-724abc4c3d4a">
+                  <items>
+                    <container id="9b6cda1e-9abe-48ae-976d-206b40f73186" name="LastWriteTime">
+                      <items />
+                    </container>
+                    <container id="f9abf2b1-75bb-47e3-853e-433b1bc67f8d" name="Name">
+                      <items />
+                    </container>
+                    <container id="b4ba8d5e-4147-4f50-9561-3e7d5a8bac47" name="Directory">
+                      <items />
+                    </container>
+                    <container id="20d288cd-5608-42b7-adcb-5c05798be3f6" name="Length">
+                      <items />
+                    </container>
+                  </items>
+                </container>
+              </items>
+            </container>
+          </items>
+        </container>
+        <container id="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Actions">
+          <items>
+            <container id="5ce7344d-3fd2-45ca-87c1-021dacaf9970" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="New-Directory" type="System.IO.FileInfo">
+              <script><![CDATA[Remove-Variable -Scope Global -Name fdir
+
+$global:fdir = $(Read-Host "Enter a new directory to process")]]></script>
+              <items />
+            </container>
+            <container id="b3d01b0b-e1ca-4eb6-bb42-c24b9d9b3fe4" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="New-FileMeasurement" type="System.IO.FileInfo">
+              <script><![CDATA[Remove-Variable -Scope Global -Name fmin -Confirm
+
+$global:fmz = $(Read-Host "Enter a new file measuremnet (KB,MB,GB)")]]></script>
+              <items />
+            </container>
+            <container id="5dd330c6-262f-4c46-8a73-75b93f2268db" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="New-FileSize" type="System.IO.FileInfo">
+              <script><![CDATA[Remove-Variable -Scope Global -Name fsize
+
+$global:fsize = $(Read-Host "Enter a new file size")]]></script>
+              <items />
+            </container>
+            <container id="718946d9-a653-4fda-8721-e78c84538bb7" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="New-FileAge" type="System.IO.FileInfo">
+              <script><![CDATA[Remove-Variable -Scope Global -Name rdays
+
+$global:rdays = $(Read-Host "Enter a new minimum age for files in days")]]></script>
+              <items />
+            </container>
+            <container id="ee4bd463-f427-4264-989a-29097bd75352" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="New-Directory" type="System.IO.DirectoryInfo">
+              <script><![CDATA[Remove-Variable -Scope Global -Name fdir
+
+$global:fdir = $(Read-Host "Enter a new directory to process")]]></script>
+              <items />
+            </container>
+            <container id="8ff8c6a2-90e5-4818-8ed8-b4f968ce6256" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Toggle-TotalSize" type="System.IO.DirectoryInfo">
+              <script><![CDATA[
+if ($global:bit) { $global:bit = $false } else { $global:bit = $true }
+
+]]></script>
+              <items />
+            </container>
+            <container id="e97297da-b88b-47fe-9344-62dbdf97139d" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="AddTo-Zip" type="UserUsage">
+              <script><![CDATA[
+
+param ($zipfile)
+
+
+function Add-Zip
+{
+# Credits:
+#David Aiken
+# http://blogs.msdn.com/daiken/archive/2007/02/12/compress-files-with-windows-powershell-then-package-a-windows-vista-sidebar-gadget.aspx
+	param([string]$zipfilename)
+
+	if(-not (test-path($zipfilename)))
+	{
+		set-content $zipfilename ("PK" + [char]5 + [char]6 + ("$([char]0)" * 18))
+		(dir $zipfilename).IsReadOnly = $false	
+	}
+	
+	$shellApplication = new-object -com shell.application
+	$zipPackage = $shellApplication.NameSpace($zipfilename)
+	
+	foreach($file in $input) 
+	{ 
+            $zipPackage.CopyHere($file.FullName)
+            Start-sleep -milliseconds 500
+	}
+}
+
+$input | Add-Zip $zipfile
+
+Invoke-Item $zipfile]]></script>
+              <items />
+            </container>
+            <container id="5250636b-1eba-4385-94b4-59b158b6acf2" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Zip-ByOwner" type="UserUsage">
+              <script><![CDATA[# Take object input and zip all files in Path owned by specified owner
+param($zipfile)
+
+
+function Add-Zip
+{
+# Credits:
+#David Aiken
+# http://blogs.msdn.com/daiken/archive/2007/02/12/compress-files-with-windows-powershell-then-package-a-windows-vista-sidebar-gadget.aspx
+	param([string]$zipfilename)
+
+	if(-not (test-path($zipfilename)))
+	{
+		set-content $zipfilename ("PK" + [char]5 + [char]6 + ("$([char]0)" * 18))
+		(dir $zipfilename).IsReadOnly = $false	
+	}
+	
+	$shellApplication = new-object -com shell.application
+	$zipPackage = $shellApplication.NameSpace($zipfilename)
+	
+	foreach($file in $input) 
+	{ 
+            $zipPackage.CopyHere($file.FullName)
+            Start-sleep -milliseconds 500
+	}
+}
+
+function Get-OwnedFiles
+{
+	Process
+	{
+	$owner = $input.Owner
+	$path = $input.Path
+	Write-Host "Path= $path"
+	$ownedfiles = Get-ChildItem -Force -Recurse $path | ? { $_.GetType().Name -eq "FileInfo"} | ? { (Get-Acl $path).Owner -eq $owner} 
+	
+    return $ownedfiles
+	}
+}
+
+
+
+$input
+
+$filestozip | Add-Zip $zipfile
+
+Invoke-Item $zipfile
+
+#}]]></script>
+              <items />
+            </container>
+            <container id="a5c6c7a0-8004-40b6-83d1-481e7f90f4b9" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="New-Directory" type="UserUsage">
+              <script><![CDATA[Remove-Variable -Scope Global -Name fdir
+
+$global:fdir = $(Read-Host "Enter a new directory to process")]]></script>
+              <items />
+            </container>
+            <container id="6215c006-743f-45fc-b870-240c6217b539" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Toggle-TotalSize" type="UserUsage">
+              <script><![CDATA[if ($global:bit) { $global:bit = $false } else { $global:bit = $true }]]></script>
+              <items />
+            </container>
+            <container id="7e03acae-2c2b-4db0-8513-fb26fb312683" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="New-ComputerQuotas" type="System.Management.ManagementObject#root\CIMV2\Win32_DiskQuota">
+              <script><![CDATA[Remove-Variable -Scope global -Name strComputer
+
+$global:strComputer = Read-Host "Enter Computername to get quotas from"
+]]></script>
+              <items />
+            </container>
+          </items>
+        </container>
+      </items>
+    </container>
+  </items>
+</configuration>

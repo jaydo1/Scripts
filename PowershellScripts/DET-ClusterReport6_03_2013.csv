@@ -1,0 +1,4 @@
+"VCname","DCname","Clustername","Total Physical Memory (GB)","Configured Memory (GB)","Available Memroy (GB)","Total CPU (Mhz)","Configured CPU (Mhz)","Available CPU (Mhz)","Total Disk Space (GB)","Configured Disk Space (GB)","Available Disk Space (GB)","Nr of hosts","Nr of VMs"
+"upvvcs004","Ultimo","SAP_Pre_Production_U","0.0","0.0","0.0",,,"0","0.0","0.0","0.0","0","0"
+"upvvcs004","Ultimo","SAP_U_Loadrunner","48.0","0.0","48.0","20264","0","20264","0.0","0.0","0.0","1","0"
+"hpvvcs004","Herbert Street","SAP_Production_H","471.9","49.8","422.1","202640","2170","200470","4798.5","1463.2","3335.3","10","10"

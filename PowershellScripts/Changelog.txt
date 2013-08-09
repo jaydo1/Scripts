@@ -1,0 +1,14 @@
+# Changes:
+# Version 6.0 - Moved plugins into seperate scripts to make it easier to expand vCheck and fixed issues + lots lots more !
+# Version 5.1 - Code Fixes and ability to change colour for title text to fix issue with Outlook 2007/10 not displaying correctly
+# Version 5.0 - Changed the order and a few titles etc, tidy up !
+# Version 4.9 - Added Inacessable VMs
+# Version 4.8 - Added HA VM restarts and resets
+# Version 4.7 - VMTools Issues
+# Version 4.6 - Added VCB Garbage
+# Version 4.5 - Added Host config issues
+# Version 4.4 - Added Disk Overcommit check
+# Version 4.3 - Added vSwitch free ports check
+# Version 4.2 - Added General Capacity Information based on CPU and MEM ussage per cluster
+# Version 4.1 - Added the ability to change the colours of the report.
+# Version 4.0 - HTML Tidy up, comments added for each item and the ability to enable/disable comments.

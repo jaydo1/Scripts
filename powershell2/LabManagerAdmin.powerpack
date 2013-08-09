@@ -1,0 +1,741 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration id="5195a7e2-7501-47b7-b432-3d7d1cf52c8a">
+  <container id="c93b671f-a1d1-4c3b-9fe6-b75fe3dd7b97" name="SnapinInfo">
+    <items>
+      <container id="2a7a09ae-54f3-468b-a188-7c3b7c5eb6e3" name="welcome">
+        <items />
+      </container>
+      <container id="2c4e1b31-79c0-46ad-aa27-eaacf1c10b59" name="Required Snapins">
+        <items />
+      </container>
+      <container id="7b082250-5a98-48f5-8a3f-6ab5f1e4d90e" name="PowerGUI Version">
+        <value>1.5.1.512</value>
+        <items />
+      </container>
+    </items>
+  </container>
+  <items>
+    <container id="b3b2283e-6f58-40c6-86b6-f01cd7f060fa" name="Navigation Tree">
+      <items>
+        <container id="e035abcd-6726-4d4c-9c61-7938f3c63e9d" parent="c3c2f139-eb17-4cf4-87de-2575eaead077" name="LabManager" type="Folder">
+          <items>
+            <container id="48caa25b-3891-4c3d-802b-c936dd9b4c4a" parent="e035abcd-6726-4d4c-9c61-7938f3c63e9d" name="Connect" type="Script@System.Management.Automation.PSCustomObject" returntype="PowerGUI.LabManagerAdmin.Connection.Parameters">
+              <script><![CDATA[
+##
+# Function Global:Add-WSDLReference 
+# 
+# Used to add a WSDL web reference. 
+# Mostly borrowed from Lee Holmes' blog: http://www.leeholmes.com/blog/CallingAWebserviceFromPowerShell.aspx
+##
+Function Global:Add-WSDLReference {
+
+      param( 
+
+            [string] $wsdlLocation, 
+
+            [string] $namespace)
+
+      
+
+      ## Create the web service cache, if it doesn't already exist
+
+      Invoke-Expression (
+
+      'if(-not (Test-Path Variable:\'+$namespace+'.WebServiceCache))    
+
+      {
+
+            ${GLOBAL:'+$namespace+'.WebServiceCache} = @{}
+
+      }')
+
+      
+
+      ## Check if there was an instance from a previous connection to
+
+      ## this web service. If so, return that instead.
+
+      Invoke-Expression (
+
+      '$oldInstance = ${GLOBAL:'+$namespace+'.WebServiceCache}[$wsdlLocation]'
+
+      )
+
+      if($oldInstance)
+
+      {
+
+            $oldInstance
+
+            return
+
+      }
+
+      
+
+      ## Load the required Web Services DLL
+
+      [void] [Reflection.Assembly]::LoadWithPartialName("System.Web.Services")
+
+      
+
+      ## Download the WSDL for the service, and create a service description from it.
+
+      $wc = new-object System.Net.WebClient
+
+      $wc.Proxy = [System.Net.WebRequest]::DefaultWebProxy;
+
+      $wc.Credentials = [System.Net.CredentialCache]::DefaultCredentials;
+
+      $wsdlStream = $wc.OpenRead($wsdlLocation);
+
+      
+
+      # Ensure that we were able to fetch the WSDL
+
+      if(-not (Test-Path Variable:\wsdlStream))
+
+      {
+
+            return
+
+      }
+
+      $serviceDescription = [Web.Services.Description.ServiceDescription]::Read($wsdlStream)
+
+      $wsdlStream.Close()
+
+      
+
+      ## Ensure that we were able to read the WSDL into a service description
+
+      if(-not (Test-Path Variable:\serviceDescription))
+
+      {
+
+            return
+
+      }
+
+      
+
+      ## Import the web service into a CodeDom
+
+      $serviceNamespace = New-Object System.CodeDom.CodeNamespace
+
+      if($namespace)
+
+      {
+
+            $serviceNamespace.Name = $namespace
+
+      }
+
+      
+
+      $codeCompileUnit = New-Object System.CodeDom.CodeCompileUnit
+
+ 
+
+      $serviceDescriptionImporter = New-Object Web.Services.Description.ServiceDescriptionImporter   
+
+      $serviceDescriptionImporter.AddServiceDescription($serviceDescription, $null, $null)
+
+      
+
+      [void] $codeCompileUnit.Namespaces.Add($serviceNamespace)
+
+      [void] $serviceDescriptionImporter.Import($serviceNamespace, $codeCompileUnit)
+
+      
+
+      ## Generate the code from that CodeDom into a string
+
+      $generatedCode = New-Object Text.StringBuilder
+
+      $stringWriter = New-Object IO.StringWriter $generatedCode
+
+      $provider = New-Object Microsoft.CSharp.CSharpCodeProvider
+
+      $provider.GenerateCodeFromCompileUnit($codeCompileUnit, $stringWriter, $null)
+
+      
+
+      ## Compile the source code.
+
+      
+
+      $references = @("System.dll", "System.Web.Services.dll", "System.Xml.dll")
+
+      $compilerParameters = New-Object System.CodeDom.Compiler.CompilerParameters
+
+      $compilerParameters.ReferencedAssemblies.AddRange($references)
+
+      $compilerParameters.GenerateInMemory = $true
+
+      
+
+      $compilerResults = $provider.CompileAssemblyFromSource($compilerParameters, $generatedCode)
+
+      
+
+      ## Write any errors if generated.        
+
+      if($compilerResults.Errors.Count -gt 0)
+
+      {
+
+            $errorLines = ""
+
+            foreach($error in $compilerResults.Errors)
+
+            {
+
+                  $errorLines += "`n`t" + $error.Line + ":`t" + $error.ErrorText
+
+            }
+
+            Write-Error $errorLines
+
+            return
+
+      }
+
+      ## There were no errors.  Create the webservice object and return it.
+
+      else
+
+      {
+
+            ## Get the assembly that we just compiled
+
+            $assembly = $compilerResults.CompiledAssembly
+
+      
+
+            ## Find the type that had the WebServiceBindingAttribute.
+
+            ## There may be other "helper types" in this file, but they will
+
+            ## not have this attribute
+
+            $type = $assembly.GetTypes() |
+
+                  Where-Object { $_.GetCustomAttributes(
+
+                        [System.Web.Services.WebServiceBindingAttribute], $false) }
+
+      
+
+            if(-not $type)
+
+            {
+
+                  Write-Error "Could not generate web service proxy."
+
+                  return
+
+            }     
+
+            ## Create an instance of the type, store it in the cache,
+
+            ## and return it to the user.
+
+            $instance = $assembly.CreateInstance($type)
+
+            Invoke-Expression (
+
+            '${GLOBAL:'+$namespace+'.WebServiceCache}[$wsdlLocation] = $instance'
+
+            )
+
+            
+
+      }
+
+      
+
+}
+
+# Display a list of available connections
+[quest.powergui.hostfactory]::Current.Application.Navigation.CurrentItem.ObjectType = "PowerGUI.LabManagerAdmin.Connection.Parameters"
+
+$cnfPath = "$($env:appdata)\Quest Software\PowerGUI\Quest.PowerGUI.LabManagerAdmin.Config.xml"
+$connections = @{}
+
+if ( Test-Path -Path $cnfPath ) {
+	$connections = Import-Clixml -Path $cnfPath
+}
+
+# Create a default sample connection
+if ( $connections.Count -eq 0 ) {
+
+	$serverDetails = New-Object -TypeName System.Management.Automation.PSObject
+	$serverDetails.PSObject.TypeNames[0] = "$($serverDetails.PSObject.TypeNames[0])#LMConnection"
+
+	
+	$serverDetails `
+		| Add-Member -MemberType noteproperty  "DisplayName" -Value "Sample" -PassThru `
+		| Add-Member -MemberType noteproperty  "ServerName" -Value "test.foo.bar" -PassThru `
+		| Add-Member -MemberType noteproperty  "UserName" -Value "bigworm" 
+		
+	$connections[$serverDetails.DisplayName]=$serverDetails
+	$connections | Export-Clixml -Path $cnfPath
+}
+$connections | ForEach-Object { $_.Values }
+
+]]></script>
+              <items />
+            </container>
+            <container id="c5eb7531-96b6-43ac-856a-64ab840d525a" parent="e035abcd-6726-4d4c-9c61-7938f3c63e9d" name="Workspaces" type="Script@VMLabManager.Configuration" returntype="VMLabManager.Configuration">
+              <script><![CDATA[# List the machines for a given workspace
+Function global:LMListMachines {
+	param($confId)
+	write-output $LMBinding.ListMachines($confId)
+}
+
+$WorkspaceNode =  [Quest.PowerGUI.HostFactory]::Current.Application.Navigation.CurrentItem
+
+if ($LMBinding -ne $null){
+$LMBinding.ListConfigurations(1) | Sort-Object Name | ForEach-Object {
+	$childNode = $WorkspaceNode.AddChild()
+	$childNode.Name = $_.Name
+	$confId = $_.id
+	$childNode.Script = "LMListMachines $confId"
+}
+	
+foreach ($config in $LMBinding.ListConfigurations(1) | Sort-Object Name) {
+Write-Output  $config
+}
+$WorkspaceNode.Expand()
+
+}
+else {
+	Write-Output "Not connected to a server."
+}]]></script>
+              <items />
+            </container>
+            <container id="273b90d9-945a-4e1e-9699-05ae50b4a5a2" parent="e035abcd-6726-4d4c-9c61-7938f3c63e9d" name="Library Configurations" type="Script">
+              <script><![CDATA[# List the machines for a given workspace
+Function global:LMListMachines {
+	param($confId)
+	write-output $LMBinding.ListMachines($confId)
+}
+
+$WorkspaceNode =  [Quest.PowerGUI.HostFactory]::Current.Application.Navigation.CurrentItem
+
+if ($LMBinding -ne $null){
+$LMBinding.ListConfigurations(2) | Sort-Object Name | ForEach-Object {
+	$childNode = $WorkspaceNode.AddChild()
+	$childNode.Name = $_.Name
+	$confId = $_.id
+	$childNode.Script = "LMListMachines $confId"
+}
+	
+foreach ($config in $LMBinding.ListConfigurations(2) | Sort-Object Name) {
+Write-Output  $config
+}
+$WorkspaceNode.Expand()
+
+}
+else {
+	Write-Output "Not connected to a server."
+}]]></script>
+              <items />
+            </container>
+          </items>
+        </container>
+      </items>
+    </container>
+    <container id="1ef02fe0-c6fc-4cdc-88bc-a9e4313bee18" name="Actions">
+      <items>
+        <container id="481eccc0-43f8-47b8-9660-f100dff38e14" name="Links">
+          <items>
+            <container id="3354c297-a0cf-4051-bd72-c3f3f3d71392" parent="481eccc0-43f8-47b8-9660-f100dff38e14" name="List Machines" type="VMLabManager.Configuration" returntype="VMLabManager.Machine" IsDefault="True">
+              <script><![CDATA[$input | ForEach-Object {
+
+ write-output $LMBinding.ListMachines($_.id)
+}]]></script>
+              <items />
+            </container>
+          </items>
+        </container>
+        <container id="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Actions">
+          <items>
+            <container id="40d4f93c-c2b8-4d8d-989f-706382418b0b" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Launch Remote Desktop" type="VMLabManager.Machine" IsDefault="True">
+              <script><![CDATA[$input | ForEach-Object {
+	$ip = $_.externalIP
+	mstsc /v:$ip
+	break
+}]]></script>
+              <items />
+            </container>
+            <container id="73601147-69d3-4f84-8df3-916d56410c49" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="PowerOn" type="VMLabManager.Machine">
+              <script><![CDATA[#        PowerOn = 1,
+#        PowerOff = 2,
+#        Suspend = 3,
+#        Resume = 4,
+#        Reset = 5,
+#        SnapShot = 6,
+#        Revert = 7,
+#        ShutDown = 8
+		
+$input | ForEach-Object {
+	$LMBinding.MachinePerformAction($_.id,1)
+}]]></script>
+              <items />
+            </container>
+            <container id="b4cce7cc-6a55-429a-ace4-b1c5c3da0fc4" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="PowerOff" type="VMLabManager.Machine">
+              <script><![CDATA[#        PowerOn = 1,
+#        PowerOff = 2,
+#        Suspend = 3,
+#        Resume = 4,
+#        Reset = 5,
+#        SnapShot = 6,
+#        Revert = 7,
+#        ShutDown = 8
+		
+$input | ForEach-Object {
+	$LMBinding.MachinePerformAction($_.id,2)
+}]]></script>
+              <items />
+            </container>
+            <container id="a7f65182-2c00-4b95-91bc-3d89b1be78f1" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Suspend" type="VMLabManager.Machine">
+              <script><![CDATA[#        PowerOn = 1,
+#        PowerOff = 2,
+#        Suspend = 3,
+#        Resume = 4,
+#        Reset = 5,
+#        SnapShot = 6,
+#        Revert = 7,
+#        ShutDown = 8
+		
+$input | ForEach-Object {
+	$LMBinding.MachinePerformAction($_.id,3)
+}]]></script>
+              <items />
+            </container>
+            <container id="a7e24dfe-1d23-4bcc-8a7a-6a66dcbe598b" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Resume" type="VMLabManager.Machine">
+              <script><![CDATA[#        PowerOn = 1,
+#        PowerOff = 2,
+#        Suspend = 3,
+#        Resume = 4,
+#        Reset = 5,
+#        SnapShot = 6,
+#        Revert = 7,
+#        ShutDown = 8
+		
+$input  | ForEach-Object {
+	$LMBinding.MachinePerformAction($_.id,4)
+}]]></script>
+              <items />
+            </container>
+            <container id="a846d9e2-ac87-47dc-a209-22cb230ad7c2" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Reset" type="VMLabManager.Machine">
+              <script><![CDATA[#        PowerOn = 1,
+#        PowerOff = 2,
+#        Suspend = 3,
+#        Resume = 4,
+#        Reset = 5,
+#        SnapShot = 6,
+#        Revert = 7,
+#        ShutDown = 8
+		
+$input | ForEach-Object {
+	$LMBinding.MachinePerformAction($_.id,5)
+}]]></script>
+              <items />
+            </container>
+            <container id="b102325e-2982-43cd-bd94-5b2a4f992718" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="SnapShot" type="VMLabManager.Machine">
+              <script><![CDATA[#        PowerOn = 1,
+#        PowerOff = 2,
+#        Suspend = 3,
+#        Resume = 4,
+#        Reset = 5,
+#        SnapShot = 6,
+#        Revert = 7,
+#        ShutDown = 8
+		
+$input | ForEach-Object {
+	$LMBinding.MachinePerformAction($_.id,6)
+}]]></script>
+              <items />
+            </container>
+            <container id="259b19b5-ecb7-4aa6-bd7b-bdec775c1853" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Revert" type="VMLabManager.Machine">
+              <script><![CDATA[#        PowerOn = 1,
+#        PowerOff = 2,
+#        Suspend = 3,
+#        Resume = 4,
+#        Reset = 5,
+#        SnapShot = 6,
+#        Revert = 7,
+#        ShutDown = 8
+		
+$input | ForEach-Object {
+	$LMBinding.MachinePerformAction($_.id,7)
+}]]></script>
+              <items />
+            </container>
+            <container id="2cea52eb-dd59-45c1-b9c2-2513f20a874a" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Shutdown" type="VMLabManager.Machine">
+              <script><![CDATA[#        PowerOn = 1,
+#        PowerOff = 2,
+#        Suspend = 3,
+#        Resume = 4,
+#        Reset = 5,
+#        SnapShot = 6,
+#        Revert = 7,
+#        ShutDown = 8
+		
+$input | ForEach-Object {
+	$LMBinding.MachinePerformAction($_.id,8)
+}]]></script>
+              <items />
+            </container>
+            <container id="521a317e-b00e-4ebc-9ff0-554933a75018" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Undeploy" type="VMLabManager.Configuration">
+              <script><![CDATA[$input | ForEach-Object {
+	 $LMBinding.ConfigurationUndeploy($_.id)
+}]]></script>
+              <items />
+            </container>
+            <container id="2089d9a1-901b-4c95-abd2-83a6a66a5311" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Deploy" type="VMLabManager.Configuration">
+              <script><![CDATA[param($fenceMode)
+# Deploys config with given fence mode 
+
+# 1 -> NotFenced
+# 2 -> FencedBlockTraffic 
+# 3 -> FencedAllowTrafficOutOnly 
+# 4 -> FencedAllowTrafficInAndOut
+
+#
+ $input | ForEach-Object {
+	$LMBinding.ConfigurationDeploy($_.id,$false,$fenceMode)
+}]]></script>
+              <items />
+            </container>
+            <container id="f778b692-e553-41ab-ab80-bfe73760b5d0" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Delete" type="VMLabManager.Configuration">
+              <script><![CDATA[ $input | ForEach-Object {
+	$LMBinding.ConfigurationDelete($_.id)
+}]]></script>
+              <items />
+            </container>
+            <container id="813d93e0-9b22-4f29-803c-d2f9464c3874" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="PowerOn" type="VMLabManager.Configuration">
+              <script><![CDATA[#        PowerOn = 1,
+#        PowerOff = 2,
+#        Suspend = 3,
+#        Resume = 4,
+#        Reset = 5,
+#        SnapShot = 6,
+#        Revert = 7,
+#        ShutDown = 8
+		
+$input | ForEach-Object {
+	$LMBinding.MachinePerformAction($_.id,1)
+}]]></script>
+              <items />
+            </container>
+            <container id="6c6a5af8-7345-4129-b558-2de8ae6843fd" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="PowerOff" type="VMLabManager.Configuration">
+              <script><![CDATA[#        PowerOn = 1,
+#        PowerOff = 2,
+#        Suspend = 3,
+#        Resume = 4,
+#        Reset = 5,
+#        SnapShot = 6,
+#        Revert = 7,
+#        ShutDown = 8
+		
+$input | ForEach-Object {
+	$LMBinding.MachinePerformAction($_.id,2)
+}]]></script>
+              <items />
+            </container>
+            <container id="083e5329-d1f5-4d7a-a9d7-0d11df4e0b6a" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Suspend" type="VMLabManager.Configuration">
+              <script><![CDATA[#        PowerOn = 1,
+#        PowerOff = 2,
+#        Suspend = 3,
+#        Resume = 4,
+#        Reset = 5,
+#        SnapShot = 6,
+#        Revert = 7,
+#        ShutDown = 8
+		
+$input | ForEach-Object {
+	$LMBinding.MachinePerformAction($_.id,3)
+}]]></script>
+              <items />
+            </container>
+            <container id="9f1bcaaa-420d-4839-b63c-6018544d2daf" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Resume" type="VMLabManager.Configuration">
+              <script><![CDATA[#        PowerOn = 1,
+#        PowerOff = 2,
+#        Suspend = 3,
+#        Resume = 4,
+#        Reset = 5,
+#        SnapShot = 6,
+#        Revert = 7,
+#        ShutDown = 8
+		
+$input | ForEach-Object {
+	$LMBinding.MachinePerformAction($_.id,4)
+}]]></script>
+              <items />
+            </container>
+            <container id="d2e0828b-87d9-4eaa-890b-967c73c6722f" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Reset" type="VMLabManager.Configuration">
+              <script><![CDATA[#        PowerOn = 1,
+#        PowerOff = 2,
+#        Suspend = 3,
+#        Resume = 4,
+#        Reset = 5,
+#        SnapShot = 6,
+#        Revert = 7,
+#        ShutDown = 8
+		
+$input | ForEach-Object {
+	$LMBinding.MachinePerformAction($_.id,5)
+}]]></script>
+              <items />
+            </container>
+            <container id="9fe0aed4-d01a-4ee0-a715-d45fcc90de54" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="SnapShot" type="VMLabManager.Configuration">
+              <script><![CDATA[#        PowerOn = 1,
+#        PowerOff = 2,
+#        Suspend = 3,
+#        Resume = 4,
+#        Reset = 5,
+#        SnapShot = 6,
+#        Revert = 7,
+#        ShutDown = 8
+		
+$input | ForEach-Object {
+	$LMBinding.MachinePerformAction($_.id,6)
+}]]></script>
+              <items />
+            </container>
+            <container id="4f4e44b7-91d6-4d88-be5b-d879aa3d1b40" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Revert" type="VMLabManager.Configuration">
+              <script><![CDATA[#        PowerOn = 1,
+#        PowerOff = 2,
+#        Suspend = 3,
+#        Resume = 4,
+#        Reset = 5,
+#        SnapShot = 6,
+#        Revert = 7,
+#        ShutDown = 8
+		
+$input | ForEach-Object {
+	$LMBinding.MachinePerformAction($_.id,7)
+}]]></script>
+              <items />
+            </container>
+            <container id="5fc889c3-92b1-449e-93df-f3d2bfce5159" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Shutdown" type="VMLabManager.Configuration">
+              <script><![CDATA[#        PowerOn = 1,
+#        PowerOff = 2,
+#        Suspend = 3,
+#        Resume = 4,
+#        Reset = 5,
+#        SnapShot = 6,
+#        Revert = 7,
+#        ShutDown = 8
+		
+$input | ForEach-Object {
+	$LMBinding.MachinePerformAction($_.id,8)
+}]]></script>
+              <items />
+            </container>
+            <container id="3395d68c-6f68-4644-82d3-73fd0aed6038" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Set Private" type="VMLabManager.Configuration">
+              <script><![CDATA[		
+$input | ForEach-Object {
+	$LMBinding.ConfigurationSetPublicPrivate($_.id, $false);
+}]]></script>
+              <items />
+            </container>
+            <container id="9aaa4f53-005e-40b1-9fe9-e3f88fea5e57" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Set Public" type="VMLabManager.Configuration">
+              <script><![CDATA[$input | foreach {
+	$LMBinding.ConfigurationSetPublicPrivate($_.id, $true)
+}]]></script>
+              <items />
+            </container>
+            <container id="f83d3089-8dc0-4de7-93e3-17fb2eaeef91" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Clone" type="VMLabManager.Configuration">
+              <script><![CDATA[param ([string] $newName)
+
+$input | foreach {
+	$LMBinding.ConfigurationClone($_.id, $newName)
+	break
+}]]></script>
+              <items />
+            </container>
+            <container id="a145ab9c-2063-4a43-8ca7-6ce9d60eadcf" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Connect" type="PowerGUI.LabManagerAdmin.Connection.Parameters" IsDefault="True">
+              <script><![CDATA[
+# Connect to the selected servers
+
+	
+$input | ForEach-Object {
+	$global:LMServerName = $_.ServerName
+	$user = $_.UserName + "@" + $LMServerName
+	$password = Read-Host -Prompt "Password for $user" -AsSecureString
+
+	$connections = @{}
+	$cnfPath = "$($env:appdata)\Quest Software\PowerGUI\Quest.PowerGUI.LabManagerAdmin.Config.xml"
+	$connections = Import-Clixml -Path $cnfPath
+
+	$wsdl = "https://"+$LMServerName+"/LabManager/SOAP/LabManager.asmx?WSDL"
+	$ref = Add-WSDLReference $wsdl "VMLabManager"
+	
+	$global:LMBinding = New-Object VMLabManager.VMwareLabManagerSOAPinterface
+
+	$LMBinding.Url = "https://"+$LMServerName+"/LabManager/SOAP/LabManager.asmx"
+	$LMBinding.Timeout = 10 * 60 * 1000
+	$LMBinding.AuthenticationHeaderValue = New-Object VMLabManager.AuthenticationHeader
+
+
+	$username = $_.UserName
+	
+	$global:LMBinding.AuthenticationHeaderValue.username = $username
+	$global:LMBinding.AuthenticationHeaderValue.password = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($password))
+	
+
+}
+]]></script>
+              <items />
+            </container>
+            <container id="8edbca4f-5958-46c4-8b5d-c2d2259cc0a5" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Add" type="PowerGUI.LabManagerAdmin.Connection.Parameters">
+              <script><![CDATA[# Prompt for a new point
+param($displayName, $serverName, $userName)
+
+$connections = @{}
+
+if ($Server -ne "" ) {
+	$cnfPath = "$($env:appdata)\Quest Software\PowerGUI\Quest.PowerGUI.LabManagerAdmin.Config.xml"
+	$connections = Import-Clixml -Path $cnfPath
+	
+	$serverDetails = New-Object -TypeName System.Management.Automation.PSObject
+	$serverDetails.PSObject.TypeNames[0] = "$($serverDetails.PSObject.TypeNames[0])#LMConnection"
+	$serverDetails `
+	|	Add-Member -MemberType noteproperty  "DisplayName" -Value $displayName -PassThru `
+	|	Add-Member -MemberType noteproperty  "ServerName" -Value $serverName -PassThru `
+	|	Add-Member -MemberType noteproperty  "UserName" -Value $userName
+	
+	
+	$connections[$serverDetails.DisplayName]=$serverDetails
+	$connections | Export-Clixml -Path $cnfPath
+}]]></script>
+              <items />
+            </container>
+            <container id="c7ae2510-e560-44d5-b420-9ae361e17e38" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Remove" type="PowerGUI.LabManagerAdmin.Connection.Parameters">
+              <script><![CDATA[# Remove selected items
+$connections = @{}
+
+$cnfPath = "$($env:appdata)\Quest Software\PowerGUI\Quest.PowerGUI.VMware.Config.xml"
+$connections = Import-Clixml -Path $cnfPath
+
+$input | ForEach-Object {
+	If ($connections.Contains( $_.DisplayName )) {
+		$connections.Remove( $_.DisplayName )
+	}
+}
+	
+$connections | Export-Clixml -Path $cnfPath
+]]></script>
+              <items />
+            </container>
+          </items>
+        </container>
+      </items>
+    </container>
+  </items>
+</configuration>

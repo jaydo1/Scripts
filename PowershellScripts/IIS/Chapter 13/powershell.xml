@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<PowerShell>
+  <blogs>
+    <blog>
+      <url>http://richardsiddaway.spaces.live.com</url>
+      <author>Richard Siddaway</author>
+    </blog>
+    <blog>
+      <url>http://dmitrysotnikov.wordpress.com</url>
+      <author>Dmitry Sotnikov</author>
+    </blog>
+    <blog>
+      <url>http://blogs.technet.com/jamesone</url>
+      <author>James O'Neill</author>
+    </blog>
+  </blogs>
+  <books>
+    <book>
+      <title lang="en">PowerShell in Practice</title>
+      <author>Richard Siddaway</author>
+      <year>2009</year>
+    </book>
+    <book>
+      <title lang="en">PowerShell in Action</title>
+      <author>Bruce Payette</author>
+      <year>2007</year>
+    </book>
+  </books>
+</PowerShell>

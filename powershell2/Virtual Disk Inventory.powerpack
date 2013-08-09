@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration id="f6881e79-4781-446d-9aa8-f927627bc359">
+  <container id="f5f11900-7edc-47f6-9efa-87abd9d5df07" name="PowerPack Info">
+    <items>
+      <container id="01f58085-d817-4d04-8316-f978e8674b7e" name="PowerPack Name">
+        <value>Virtual Disk Inventory</value>
+      </container>
+      <container id="2a7a09ae-54f3-468b-a188-7c3b7c5eb6e3" name="Description">
+        <script><![CDATA[Provides inventory of installed Operating Systems in a directory of virtual disks.]]></script>
+      </container>
+      <container id="2c4e1b31-79c0-46ad-aa27-eaacf1c10b59" name="Required Snapins">
+        <items>
+          <container name="DiscUtils.PowerShell" type="Module">
+            <items>
+              <item id="514dab30-b238-4ae1-a6ac-38d5c3cfbed4" name="Author">
+                <value />
+              </item>
+              <item id="8620403a-d313-44bb-8101-8b3090409c34" name="Version">
+                <value>0.8.0.0</value>
+              </item>
+            </items>
+          </container>
+        </items>
+      </container>
+      <container id="158620d6-6c0c-4c58-a3b0-8810fd17c3b1" name="PowerPack Version">
+        <value>1.0.0.1</value>
+      </container>
+      <container id="81ad5d68-143b-4c79-8a95-bef6c941282b" name="PowerPack CreateDate">
+        <value>2010-04-11 13:14:35Z</value>
+      </container>
+      <container id="7600fdf1-ca11-4145-87fa-f3bc6b49d0f2" name="Update URL">
+        <value>http://powergui.org/servlet/KbServlet/download/2752-102-4515/Virtual%20Disk%20Inventory.powerpack</value>
+      </container>
+      <container id="8ae73fa1-67e8-4d3f-ad11-8245f7f5267f" name="PowerPack Home Page">
+        <value>http://powergui.org/entry.jspa?externalID=2752</value>
+      </container>
+      <container id="2840a004-5414-4758-b256-81fdcd9f8a87" name="PowerPack Icon" />
+      <container id="7b082250-5a98-48f5-8a3f-6ab5f1e4d90e" name="Console Version">
+        <value>2.2</value>
+      </container>
+    </items>
+  </container>
+  <items>
+    <container id="b3b2283e-6f58-40c6-86b6-f01cd7f060fa" name="Navigation Tree">
+      <items>
+        <container id="d8993bc2-e2a0-4408-a3f4-9e512e43f3aa" name="Virtual Disk Inventory" Description="" type="Script@" returntype="System.Management.Automation.PSCustomObject#@@@#System.Object">
+          <script><![CDATA[param($TargetDirectory = "C:\")
+
+function GetDiskInfo
+{
+   param($file)
+
+   $err=@()
+
+   #
+   # First, we try to mount the virtual disk as the PowerShell drive 'testdrive'
+   #
+   New-PSDrive testdrive -PSProvider virtualdisk -Root $file -ErrorAction SilentlyContinue -ErrorVariable err | out-null
+   if ($err.Count -gt 0)
+   {
+      return;
+   }
+
+   #
+   # Next, we check if this drive is formatted, and has a SOFTWARE hive where we expect it. If not,
+   # just ignore this disk.
+   #
+   if(Test-Path "testdrive:\Volume0\Windows\System32\config\SOFTWARE")
+   {
+      #
+      # Mount the SOFTWARE hive as the PS drive 'softdrive', and get the Windows product name
+      #
+      New-PSDrive softdrive -PSProvider virtualregistry -Root "testdrive:\Volume0\Windows\System32\config\SOFTWARE" -ErrorAction SilentlyContinue -ErrorVariable err | out-null
+      if ($err.Count -gt 0)
+      {
+         write-host "$file: Unable to load SOFTWARE registry hive"
+      }
+
+      $product = Get-ItemProperty "softdrive:\Microsoft\Windows NT\CurrentVersion" "ProductName"
+
+
+
+      #
+      # Mount the SYSTEM hive as the PS drive 'sysdrive', figure out the current control set, and read the computer name
+      #
+      New-PSDrive sysdrive -PSProvider virtualregistry -Root "testdrive:\Volume0\Windows\System32\config\SYSTEM" -ErrorAction SilentlyContinue -ErrorVariable err | out-null
+      if ($err.Count -gt 0)
+      {
+         write-host "$file: Unable to load SYSTEM registry hive"
+      }
+
+      $select = Get-ItemProperty "sysdrive:\Select"
+      $compName = Get-ItemProperty "sysdrive:\ControlSet00$($select.Current)\Control\ComputerName\ComputerName"
+
+
+
+      #
+      # Return an object describing this disk
+      #
+      return New-Object PSObject -Property @{
+        ComputerName	= $compName.ComputerName
+        Product			= $product.ProductName
+        File			= $file
+      }
+   }
+}
+
+
+#
+# Search for virtual disk files, for each report OS contents (if any)
+#
+$files = Get-ChildItem $TargetDirectory -Include @("*.vhd","*.vmdk","*.vdi","*.img","*.ima","*.flp") -rec
+
+foreach($f in $files)
+{
+    GetDiskInfo $f.FullName
+}]]></script>
+          <items>
+            <container name="properties_a807f902-4b43-4b22-86d8-724abc4c3d4a">
+              <items>
+                <container name="Product">
+                  <script><![CDATA[196]]></script>
+                </container>
+                <container name="ComputerName">
+                  <script><![CDATA[122]]></script>
+                </container>
+                <container name="File">
+                  <script><![CDATA[280]]></script>
+                </container>
+              </items>
+            </container>
+          </items>
+        </container>
+      </items>
+    </container>
+    <container id="1ef02fe0-c6fc-4cdc-88bc-a9e4313bee18" name="Actions">
+      <items>
+        <container id="481eccc0-43f8-47b8-9660-f100dff38e14" name="Links" />
+        <container id="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Actions" />
+        <container id="6669cb81-df60-4f11-9d8f-8ab7c003dd1b" name="Actions: Common" />
+        <container id="16e671d0-3394-45fa-bcf1-a3bbc2b9c6f7" name="Skype" />
+        <container id="3b5923b3-9344-4f66-a5ce-9ec848c8cc5a" name="General" />
+        <container id="210e2076-00ce-4671-9ed3-0e1571ebbc13" name="Settings" />
+        <container id="eda13588-d57c-4139-bd5c-84c96df01f86" name="Search options" />
+        <container id="0869d252-c4d8-45f9-ac2e-72a937a9d1bd" name="Related information" />
+        <container id="ce69719b-6b2e-4f96-8f4d-caa0e3f016e9" name="Security" />
+        <container id="ad118cf8-8d55-49f9-a84c-2f6ac51e5066" name="Power management" />
+        <container id="b50365e5-1fb0-458c-99ee-020a576a0003" name="Toolkit" />
+      </items>
+    </container>
+    <container id="9355c471-85b2-4b9a-92db-69873837cd8d" name="Icons" />
+    <container id="37fc9e95-a3a2-4f53-a2d4-d29fe752995c" name="Types">
+      <items>
+        <container id="8cd04df9-40df-41c2-b3ca-896145e93591" name="System.Object">
+          <items>
+            <container id="1a03a76d-a6da-4a4c-9bee-0c8bb8a9f8c5" name="Links" type="481eccc0-43f8-47b8-9660-f100dff38e14" />
+            <container id="63ec7ce3-8393-483f-a509-d5fd4ee3a6eb" name="Actions" type="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" />
+            <container id="5aee994d-6eb0-4166-8733-82dd4de78482" name="Actions: Common" type="6669cb81-df60-4f11-9d8f-8ab7c003dd1b" />
+          </items>
+        </container>
+      </items>
+    </container>
+    <container id="c4ac93e0-f9c3-4e70-9e77-79210fee0239" name="Scripts" />
+  </items>
+</configuration>

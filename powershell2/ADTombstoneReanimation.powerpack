@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration id="b4288741-28e2-4ea2-b303-35f8f09cbeeb">
+  <container id="cc6199a5-6eb3-46b4-9701-ec595108ae65" name="SnapinInfo">
+    <items>
+      <container id="2a7a09ae-54f3-468b-a188-7c3b7c5eb6e3" name="welcome">
+        <script><![CDATA[Allows you to view all recently deleted AD objects (tombstones) and restore any of them. 
+
+Requires SDM Software's AD Tombstones PowerShell snapin - which is freely available from http://www.sdmsoftware.com/freeware]]></script>
+        <items />
+      </container>
+      <container id="2c4e1b31-79c0-46ad-aa27-eaacf1c10b59" name="Required Snapins">
+        <items>
+          <container id="6495cca9-fb80-4877-9885-ce2eecda928c" name="SDMSoftware.PowerShell.AD.Tombstones">
+            <items />
+          </container>
+        </items>
+      </container>
+      <container id="7b082250-5a98-48f5-8a3f-6ab5f1e4d90e" name="PowerGUI Version">
+        <value>1.5.0.434</value>
+        <items />
+      </container>
+    </items>
+  </container>
+  <items>
+    <container id="b3b2283e-6f58-40c6-86b6-f01cd7f060fa" name="Navigation Tree">
+      <items>
+        <container id="af5e59db-9ffa-4d5b-b3f9-50e835ce8a57" parent="c3c2f139-eb17-4cf4-87de-2575eaead077" name="AD Tombstone Reanimation" type="Folder">
+          <items>
+            <container id="16273311-497b-4f55-8bb0-7ab844fc0dd0" parent="af5e59db-9ffa-4d5b-b3f9-50e835ce8a57" name="Tombstones" type="CmdLet@SDMSoftware.PowerShell.AD.Tombstones.SDMDeletedObject" returntype="SDMSoftware.PowerShell.AD.Tombstones.SDMDeletedObject">
+              <command id="c5a72598-9fdf-40e2-878f-189ad376c899" name="Get-SDMADTombstone">
+                <parameters />
+              </command>
+              <items>
+                <container id="b3b55849-c781-42dd-9688-b26ac9d553af" name="properties_a807f902-4b43-4b22-86d8-724abc4c3d4a">
+                  <items>
+                    <item id="6fb90224-607a-4221-a772-ca74c460dcd8" name="Name">
+                      <script><![CDATA[100]]></script>
+                    </item>
+                    <item id="20cb41b4-a487-4932-b390-bace93016bbe" name="LastKnownParent">
+                      <script><![CDATA[100]]></script>
+                    </item>
+                    <item id="da824ee6-f9c0-444d-9648-44eba9077fd6" name="WhenCreated">
+                      <script><![CDATA[100]]></script>
+                    </item>
+                    <item id="c718b4b5-b68f-4c68-96db-81951f1fccfe" name="WhenChanged">
+                      <script><![CDATA[100]]></script>
+                    </item>
+                    <item id="f5b90733-fe6a-44b0-b69c-05f4f099f118" name="CN">
+                      <script><![CDATA[100]]></script>
+                    </item>
+                    <item id="1f716e48-53dc-48d3-a171-17fb6cc204fc" name="DistinguishedName">
+                      <script><![CDATA[100]]></script>
+                    </item>
+                    <item id="54b5c06a-49ce-4931-baf2-f3885a58faf6" name="Description">
+                      <script><![CDATA[100]]></script>
+                    </item>
+                  </items>
+                </container>
+              </items>
+            </container>
+          </items>
+        </container>
+      </items>
+    </container>
+    <container id="1ef02fe0-c6fc-4cdc-88bc-a9e4313bee18" name="Actions">
+      <items>
+        <container id="481eccc0-43f8-47b8-9660-f100dff38e14" name="Links">
+          <items />
+        </container>
+        <container id="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Actions">
+          <items>
+            <container id="c6c933ca-a20a-4d80-a627-49366cbbfa50" parent="7826b2ed-8ae4-4ad0-bf29-1ff0a25e0ece" name="Reanimate" type="SDMSoftware.PowerShell.AD.Tombstones.SDMDeletedObject">
+              <command id="aec82f96-b8eb-416c-aff5-647faa18588e" name="Restore-SDMADTombstone">
+                <parameters />
+              </command>
+              <items />
+            </container>
+          </items>
+        </container>
+      </items>
+    </container>
+  </items>
+</configuration>

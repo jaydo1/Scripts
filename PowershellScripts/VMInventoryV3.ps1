@@ -1,0 +1,38 @@
+﻿$allLines = @()
+ Get-VM | `
+  ForEach-Object {
+    $VM = $_
+    $VMview = $VM | Get-View
+    $VMResourceConfiguration = $VM | Get-VMResourceConfiguration
+    $VMHardDisks = $VM | Get-HardDisk
+    $HardDisksSizesGB = @()
+    $Temp = $VMHardDisks | ForEach-Object { $HardDisksSizesGB += [Math]::Round($_.CapacityKB/1MB) }
+    $VmdkSizeGB = ""
+    $Temp = $HardDisksSizesGB | ForEach-Object { $VmdkSizeGB += "$_+" }
+    $VmdkSizeGB = $VmdkSizeGB.TrimEnd("+")
+    $TotalHardDisksSizeGB = 0
+    $Temp = $HardDisksSizesGB | ForEach-Object { $TotalHardDisksSizeGB += $_ }
+    $VMDKnames = @()
+	$Temp = $VMHardDisks | ForEach-Object { $VMDKnames += $_.Filename.Split("/")[1] }
+    $Snapshots = $VM | Get-Snapshot
+    $Report = "" | Select-Object VMname,ClusterName,ESXname,MemoryGB,vCPUcount,vNICcount,VmdkSizeGB,TotalVmdkSizeGB,DatastoreName,RDMPath,VLANid,Portgroup,GuestOS
+
+    $Report.VMName = $VM.name
+	$Report.ClusterName = ($VM | Get-Cluster).Name
+	$Report.ESXname = $VM.Host
+	$Report.MemoryGB = $VM.MemoryMB/1024
+    $Report.vCPUcount = $VM.NumCpu
+    $Report.vNICcount = $VM.Guest.Nics.Count
+    $Report.VmdkSizeGB = $VmdkSizeGB
+    $Report.TotalVmdkSizeGB = $TotalHardDisksSizeGB
+    $Report.DatastoreName = $VMview.Config.DatastoreUrl
+    $RDMPaths = $vm | Get-HardDisk | where {$_.DiskType -like "Raw*"}
+    $Report.RDMPath = &{if($RDMPaths){$RDMPaths | %{$_.ScsiCanonicalName}}else{"No RDM"}}
+    $Report.VLANid = [string]::Join(',',(Get-VirtualPortgroup -VM $vm | %{$_.VlanId}))
+    $Report.Portgroup = [string]::Join(',',(Get-VirtualPortgroup -VM $vm | %{$_.Name})) 
+    $Report.GuestOS = $VM.Guest.OSFullName
+    $allLines += $Report
+  
+  }
+
+  $allLines | Export-Csv "C:\DET-VMreport6_03_2013.csv" -NoTypeInformation

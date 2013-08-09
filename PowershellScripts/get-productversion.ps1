@@ -1,0 +1,1 @@
+﻿get-view -ViewType HostSystem -Property Name,Config.Product | foreach {$_.Name, $_.Config.Product}
